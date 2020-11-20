@@ -8,12 +8,6 @@ namespace FClub.Model.Tests
 	[TestClass]
 	public class ProductTests
 	{
-		[TestInitialize]
-		public void TestInitialize()
-		{
-
-		}
-
 		[TestMethod]
 		[DataRow(1, "ProductName", "10", true, true)]
 		[DataRow(1, "ProductName", "10", false, true)]
@@ -72,31 +66,7 @@ namespace FClub.Model.Tests
 			Product _product;
 
 			// Act
-			try
-			{
-				_product = new Product(1, "Product", 10M, true, true);
-			}
-			catch
-			{
-				// Assert
-				Assert.Fail();
-			}
-		}
-
-		[TestMethod]
-		public void ___()
-		{
-			// Arrange
-
-			// Act
-
-			// Assert
-		}
-
-		[TestCleanup]
-		public void TestCleanup()
-		{
-
+			_product = new Product(1, "Product", 10M, true, true);
 		}
 	}
 }

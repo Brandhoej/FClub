@@ -6,8 +6,8 @@ using System.Text;
 
 namespace FClub.Model.Tests
 {
-    [TestClass]
-    public class BuyTransactionTests
+	[TestClass]
+	public class BuyTransactionTests
 	{
 		private IIdentifier m_identifier;
 
@@ -135,9 +135,9 @@ namespace FClub.Model.Tests
 			_buyTransaction = new BuyTransaction(m_identifier, _user, _product, _datetime);
 
 			void Test()
-            {
+			{
 				_buyTransaction.Execute();
-            }
+			}
 
 			// Assert
 			Assert.ThrowsException<InsufficientCreditsException>(Test);
@@ -158,17 +158,9 @@ namespace FClub.Model.Tests
 			_user = new User(m_identifier, "FirstName", "LastName", "Username", "akbr18@student.aau.dk", _userInitBalance);
 			_product = new Product(1, "Name", _productPrice, true, true);
 			_buyTransaction = new BuyTransaction(m_identifier, _user, _product, _datetime);
+			_buyTransaction.Execute();
 
-            try
-            {
-				_buyTransaction.Execute();
-            }
-            catch
-            {
-				// Assert
-				Assert.Fail();
-            }
-
+			// Assert
 			Assert.AreEqual(_userInitBalance - _productPrice, _user.Balance);
 		}
 	}

@@ -1,7 +1,7 @@
 ﻿namespace FClub.Core
 {
-    public interface IIdentifier
-    {
-        int GetNextId();
-    }
+	public interface IIdentifier
+	{
+		int GetNextId();
+	}
 }

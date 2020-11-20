@@ -8,30 +8,24 @@ namespace FClub.Model.Tests
 	[TestClass]
 	public class SeasonalProductTests
 	{
-		[TestInitialize]
-		public void TestInitialize()
-		{
-
-		}
-
 		[TestMethod]
-		[DataRow(1, "ProductName", "10", true, true, 10, 100)]
-		[DataRow(1, "ProductName", "10", false, true, 10, 100)]
-		[DataRow(1, "ProductName", "10", true, false, 10, 100)]
-		[DataRow(1, "ProductName", "10", false, false, 10, 100)]
-		[DataRow(2, "ProductName", "10", true, true, 10, 100)]
-		[DataRow(2, "ProductName", "10", false, true, 10, 100)]
-		[DataRow(2, "ProductName", "10", true, false, 10, 100)]
-		[DataRow(2, "ProductName", "10", false, false, 10, 100)]
-		[DataRow(1, "ProductName", "-10", true, true, 10, 100)]
-		[DataRow(1, "ProductName", "-10", false, true, 10, 100)]
-		[DataRow(1, "ProductName", "-10", true, false, 10, 100)]
-		[DataRow(1, "ProductName", "-10", false, false, 10, 100)]
-		[DataRow(2, "ProductName", "-10", true, true, 10, 100)]
-		[DataRow(2, "ProductName", "-10", false, true, 10, 100)]
-		[DataRow(2, "ProductName", "-10", true, false, 10, 100)]
-		[DataRow(2, "ProductName", "-10", false, false, 10, 100)]
-		public void User_CorrectConstructionOfUser_Constructed(int id, string name, string price, bool active, bool canBeBoughtOnCredit, int unixSeasonStartDate, int unixSeasonEndDate)
+		[DataRow(1, "ProductName", "10", true, 10, 100)]
+		[DataRow(1, "ProductName", "10", true, 10, 100)]
+		[DataRow(1, "ProductName", "10", false, 10, 100)]
+		[DataRow(1, "ProductName", "10", false, 10, 100)]
+		[DataRow(2, "ProductName", "10", true, 10, 100)]
+		[DataRow(2, "ProductName", "10", true, 10, 100)]
+		[DataRow(2, "ProductName", "10", false, 10, 100)]
+		[DataRow(2, "ProductName", "10", false, 10, 100)]
+		[DataRow(1, "ProductName", "-10", true, 10, 100)]
+		[DataRow(1, "ProductName", "-10", true, 10, 100)]
+		[DataRow(1, "ProductName", "-10", false, 10, 100)]
+		[DataRow(1, "ProductName", "-10", false, 10, 100)]
+		[DataRow(2, "ProductName", "-10", true, 10, 100)]
+		[DataRow(2, "ProductName", "-10", true, 10, 100)]
+		[DataRow(2, "ProductName", "-10", false, 10, 100)]
+		[DataRow(2, "ProductName", "-10", false, 10, 100)]
+		public void User_CorrectConstructionOfUser_Constructed(int id, string name, string price, bool canBeBoughtOnCredit, int unixSeasonStartDate, int unixSeasonEndDate)
 		{
 			// Arrange
 			decimal _price;
@@ -41,36 +35,35 @@ namespace FClub.Model.Tests
 
 			// Act
 			_price = decimal.Parse(price);
-			_product = new SeasonalProduct(id, name, _price, active, canBeBoughtOnCredit, _seasonStartDate, _seasonEndDate);
+			_product = new SeasonalProduct(id, name, _price, canBeBoughtOnCredit, _seasonStartDate, _seasonEndDate);
 
 			// Assert
 			Assert.AreEqual(id, _product.Id);
 			Assert.AreEqual(name, _product.Name);
 			Assert.AreEqual(_price, _product.Price);
-			Assert.AreEqual(active, _product.Active);
 			Assert.AreEqual(canBeBoughtOnCredit, _product.CanBeBoughtOnCredit);
 			Assert.AreEqual(_seasonStartDate, _product.SeasonStartDate);
 			Assert.AreEqual(_seasonEndDate, _product.SeasonEndDate);
 		}
 
 		[TestMethod]
-		[DataRow(1, "ProductName", "10", true, true, 100, 100)]
-		[DataRow(1, "ProductName", "10", false, true, 100, 100)]
-		[DataRow(1, "ProductName", "10", true, false, 100, 100)]
-		[DataRow(1, "ProductName", "10", false, false, 100, 100)]
-		[DataRow(2, "ProductName", "10", true, true, 100, 100)]
-		[DataRow(2, "ProductName", "10", false, true, 100, 100)]
-		[DataRow(2, "ProductName", "10", true, false, 100, 100)]
-		[DataRow(2, "ProductName", "10", false, false, 100, 100)]
-		[DataRow(1, "ProductName", "-10", true, true, 100, 100)]
-		[DataRow(1, "ProductName", "-10", false, true, 100, 100)]
-		[DataRow(1, "ProductName", "-10", true, false, 100, 100)]
-		[DataRow(1, "ProductName", "-10", false, false, 100, 100)]
-		[DataRow(2, "ProductName", "-10", true, true, 100, 100)]
-		[DataRow(2, "ProductName", "-10", false, true, 100, 100)]
-		[DataRow(2, "ProductName", "-10", true, false, 100, 100)]
-		[DataRow(2, "ProductName", "-10", false, false, 100, 100)]
-		public void User_ThrowsException_IfSeasonStartIsTheSameAsSeasonEnd(int id, string name, string price, bool active, bool canBeBoughtOnCredit, int unixSeasonStartDate, int unixSeasonEndDate)
+		[DataRow(1, "ProductName", "10", true, 100, 100)]
+		[DataRow(1, "ProductName", "10", true, 100, 100)]
+		[DataRow(1, "ProductName", "10", false, 100, 100)]
+		[DataRow(1, "ProductName", "10", false, 100, 100)]
+		[DataRow(2, "ProductName", "10", true, 100, 100)]
+		[DataRow(2, "ProductName", "10", true, 100, 100)]
+		[DataRow(2, "ProductName", "10", false, 100, 100)]
+		[DataRow(2, "ProductName", "10", false, 100, 100)]
+		[DataRow(1, "ProductName", "-10", true, 100, 100)]
+		[DataRow(1, "ProductName", "-10", true, 100, 100)]
+		[DataRow(1, "ProductName", "-10", false, 100, 100)]
+		[DataRow(1, "ProductName", "-10", false, 100, 100)]
+		[DataRow(2, "ProductName", "-10", true, 100, 100)]
+		[DataRow(2, "ProductName", "-10", true, 100, 100)]
+		[DataRow(2, "ProductName", "-10", false, 100, 100)]
+		[DataRow(2, "ProductName", "-10", false, 100, 100)]
+		public void User_ThrowsException_IfSeasonStartIsTheSameAsSeasonEnd(int id, string name, string price, bool canBeBoughtOnCredit, int unixSeasonStartDate, int unixSeasonEndDate)
 		{
 			// Arrange
 			decimal _price;
@@ -82,7 +75,7 @@ namespace FClub.Model.Tests
 			_price = decimal.Parse(price);
 			void Test()
 			{
-				_product = new SeasonalProduct(id, name, _price, active, canBeBoughtOnCredit, _seasonStartDate, _seasonEndDate);
+				_product = new SeasonalProduct(id, name, _price, canBeBoughtOnCredit, _seasonStartDate, _seasonEndDate);
 			}
 
 			// Assert
@@ -118,7 +111,7 @@ namespace FClub.Model.Tests
 			_price = decimal.Parse(price);
 			void Test()
 			{
-				_product = new SeasonalProduct(id, name, _price, active, canBeBoughtOnCredit, _seasonStartDate, _seasonEndDate);
+				_product = new SeasonalProduct(id, name, _price, canBeBoughtOnCredit, _seasonStartDate, _seasonEndDate);
 			}
 
 			// Assert
@@ -134,7 +127,7 @@ namespace FClub.Model.Tests
 			// Act
 			void Test()
 			{
-				_product = new SeasonalProduct(0, "Product", 10M, true, true, DateTime.Now, DateTime.Now.AddDays(1));
+				_product = new SeasonalProduct(0, "Product", 10M, true, DateTime.Now, DateTime.Now.AddDays(1));
 			}
 
 			// Assert
@@ -148,21 +141,85 @@ namespace FClub.Model.Tests
 			SeasonalProduct _product;
 
 			// Act
-			try
-			{
-				_product = new SeasonalProduct(1, "Product", 10M, true, true, DateTime.Now, DateTime.Now.AddDays(1));
-			}
-			catch
-			{
-				// Assert
-				Assert.Fail();
-			}
+			_product = new SeasonalProduct(1, "Product", 10M, true, DateTime.Now, DateTime.Now.AddDays(1));
 		}
 
-		[TestCleanup]
-		public void TestCleanup()
+		[TestMethod]
+		public void IsActiveAt_ReturnsTrue_IFDateIsInsideStartAndEnd()
 		{
+			// Arrange
+			SeasonalProduct _product;
 
+			// Act
+			_product = new SeasonalProduct(1, "Product", 10M, true, DateTime.Now.AddDays(-1), DateTime.Now.AddDays(1));
+
+			// Assert
+			Assert.AreEqual(true, _product.IsActiveAt(DateTime.Now));
+		}
+
+		[TestMethod]
+		public void IsActiveAt_ReturnsFalse_IFDateIsBeforeStart()
+		{
+			// Arrange
+			SeasonalProduct _product;
+
+			// Act
+			_product = new SeasonalProduct(1, "Product", 10M, true, DateTime.Now.AddDays(1), DateTime.Now.AddDays(2));
+
+			// Assert
+			Assert.AreEqual(false, _product.IsActiveAt(DateTime.Now));
+		}
+
+		[TestMethod]
+		public void IsActiveAt_ReturnsFalse_IFDateIsAfterEnd()
+		{
+			// Arrange
+			SeasonalProduct _product;
+
+			// Act
+			_product = new SeasonalProduct(1, "Product", 10M, true, DateTime.Now.AddDays(-2), DateTime.Now.AddDays(-1));
+
+			// Assert
+			Assert.AreEqual(false, _product.IsActiveAt(DateTime.Now));
+		}
+
+		[TestMethod]
+		public void IsActive_ReturnsTrue_IFDateIsInsideStartAndEnd()
+		{
+			// Arrange
+			SeasonalProduct _product;
+
+			// Act
+			_product = new SeasonalProduct(1, "Product", 10M, true, DateTime.Now.AddDays(-1), DateTime.Now.AddDays(1));
+
+			// Assert
+			Assert.AreEqual(true, _product.Active);
+		}
+
+		[TestMethod]
+		public void IsActive_ReturnsFalse_IFDateIsBeforeStart()
+		{
+			// Arrange
+			SeasonalProduct _product;
+
+			// Act
+			_product = new SeasonalProduct(1, "Product", 10M, true, DateTime.Now.AddDays(1), DateTime.Now.AddDays(2));
+
+			// Assert
+			Assert.AreEqual(false, _product.Active);
+		}
+
+		[TestMethod]
+		public void IsActive_ReturnsFalse_IFDateIsAfterEnd()
+		{
+			// Arrange
+			SeasonalProduct _product;
+
+			// Act
+			_product = new SeasonalProduct(1, "Product", 10M, true, DateTime.Now.AddDays(-2), DateTime.Now.AddDays(-1));
+
+			// Assert
+			Assert.AreEqual(false, _product.Active);
 		}
 	}
 }

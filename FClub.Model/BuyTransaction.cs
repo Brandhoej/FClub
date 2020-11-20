@@ -3,32 +3,32 @@ using System;
 
 namespace FClub.Model
 {
-    public class BuyTransaction : Transaction
-    {
-        public BuyTransaction(IIdentifier identifier, User user, Product product)
-            : this(identifier, user, product ?? throw new ArgumentNullException("Product cannot be null", nameof(product)), DateTime.Now)
-        { }
+	public class BuyTransaction : Transaction
+	{
+		public BuyTransaction(IIdentifier identifier, User user, Product product)
+			: this(identifier, user, product ?? throw new ArgumentNullException(nameof(product), "Product cannot be null"), DateTime.Now)
+		{ }
 
-        public BuyTransaction(IIdentifier identifier, User user, Product product, DateTime date)
-            : this(identifier, user, product == null ? throw new ArgumentNullException("Product cannot be null", nameof(product)) : product.Price, date)
-        {
-            Product = product;
-        }
+		public BuyTransaction(IIdentifier identifier, User user, Product product, DateTime date)
+			: this(identifier, user, product == null ? throw new ArgumentNullException(nameof(product), "Product cannot be null") : product.Price, date)
+		{
+			Product = product;
+		}
 
-        protected BuyTransaction(IIdentifier identifier, User user, decimal price, DateTime date)
-            : base(identifier, user, -price, date)
-        { }
+		protected BuyTransaction(IIdentifier identifier, User user, decimal price, DateTime date)
+			: base(identifier, user, -price, date)
+		{ }
 
-        public Product Product { get; }
+		public Product Product { get; }
 
-        public override void Execute()
-        {
-            if (User.Balance + Amount <= 0)
-            {
-                throw new InsufficientCreditsException(User, Product);
-            }
+		public override void Execute()
+		{
+			if (User.Balance + Amount <= 0)
+			{
+				throw new InsufficientCreditsException(User, Product);
+			}
 
-            base.Execute();
-        }
-    }
+			base.Execute();
+		}
+	}
 }

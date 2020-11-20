@@ -6,8 +6,8 @@ using System.Text;
 
 namespace FClub.Model.Tests
 {
-    [TestClass]
-    public class TransactionTests
+	[TestClass]
+	public class TransactionTests
 	{
 		private IIdentifier m_identifier;
 
@@ -63,10 +63,48 @@ namespace FClub.Model.Tests
 
 			// Act
 			void Test()
-            {
+			{
 				_user = null;
 				_transaction = new TransactionImplementation(m_identifier, _user, _amount);
-            }
+			}
+
+			// Assert
+			Assert.ThrowsException<ArgumentNullException>(Test);
+		}
+
+		[TestMethod]
+		public void Transaction_ThrowsArgumentNullException1_IfIdentifierIsNull()
+		{
+			// Arrange
+			const decimal _amount = 0;
+			User _user;
+			Transaction _transaction;
+
+			// Act
+			void Test()
+			{
+				_user = new User(m_identifier, "FirstName", "LastName", "Username", "akbr18@student.aau.dk");
+				_transaction = new TransactionImplementation(null, _user, _amount);
+			}
+
+			// Assert
+			Assert.ThrowsException<ArgumentNullException>(Test);
+		}
+
+		[TestMethod]
+		public void Transaction_ThrowsArgumentNullException2_IfIdentifierIsNull()
+		{
+			// Arrange
+			const decimal _amount = 0;
+			User _user;
+			Transaction _transaction;
+
+			// Act
+			void Test()
+			{
+				_user = new User(m_identifier, "FirstName", "LastName", "Username", "akbr18@student.aau.dk");
+				_transaction = new TransactionImplementation(null, _user, _amount, DateTime.Now);
+			}
 
 			// Assert
 			Assert.ThrowsException<ArgumentNullException>(Test);
@@ -122,16 +160,7 @@ namespace FClub.Model.Tests
 			// Act
 			_user = new User(m_identifier, "FirstName", "LastName", "Username", "akbr18@student.aau.dk");
 			_transaction = new TransactionImplementation(m_identifier, _user, _amount, _date);
-            try
-            {
-				_transaction.ToString();
-
-			}
-            catch
-			{
-				// Assert
-				Assert.Fail();
-            }
+			_transaction.ToString();
 		}
 
 		[TestMethod]
@@ -156,12 +185,6 @@ namespace FClub.Model.Tests
 				// Since they all must be less than then we are both checking uniqueness and order
 				Assert.AreEqual(_transactions[i - 1].Id < _transactions[i].Id, true);
 			}
-		}
-
-		[TestCleanup]
-		public void TestCleanup()
-		{
-
 		}
 	}
 }

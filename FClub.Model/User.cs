@@ -8,7 +8,7 @@ namespace FClub.Model
 {
     public class User : IComparable<User>
     {
-        public event userBalanceNotification OnUserBalanceNotification;
+        public event balanceNotification OnBalanceNotification;
 
         private string m_firstName;
         private string m_lastName;
@@ -17,16 +17,24 @@ namespace FClub.Model
         private decimal m_balance;
 
         public User(IIdentifier identifier, string firstName, string lastName, string username, string email)
-            : this(identifier ?? throw new ArgumentNullException("Identifier cannot be null", nameof(identifier)), 
-                  firstName, lastName, username, email, decimal.Zero)
-		{ }
-
-        public User(IIdentifier identifier, string firstName, string lastName, string username, string email, decimal balance)
-            : this(identifier == null ? throw new ArgumentNullException("Identifier cannot be null", nameof(identifier)) : identifier.GetNextId(), 
-                  firstName, lastName, username, email, balance)
+            : this(identifier ?? throw new ArgumentNullException(nameof(identifier), "Identifier cannot be null"),
+				   firstName,
+				   lastName,
+				   username,
+				   email,
+				   decimal.Zero)
         { }
 
-        protected User(int id, string firstName, string lastName, string username, string email, decimal balance)
+        public User(IIdentifier identifier, string firstName, string lastName, string username, string email, decimal balance)
+            : this(identifier == null ? throw new ArgumentNullException(nameof(identifier), "Identifier cannot be null") : identifier.GetNextId(),
+				   firstName,
+				   lastName,
+				   username,
+				   email,
+				   balance)
+        { }
+
+        public User(int id, string firstName, string lastName, string username, string email, decimal balance)
         {
             Id = id;
             FirstName = firstName;
@@ -36,7 +44,7 @@ namespace FClub.Model
             Balance = balance;
         }
 
-        public delegate void userBalanceNotification(User user, decimal balance);
+        public delegate void balanceNotification(User user, decimal balance);
 
         public int Id { get; }
 
@@ -47,7 +55,7 @@ namespace FClub.Model
             {
                 if (string.IsNullOrEmpty(value))
                 {
-                    throw new ArgumentException("Argument cannot be null or emtpy", nameof(value));
+                    throw new ArgumentException(nameof(value), "Argument cannot be null or emtpy");
                 }
 
                 m_firstName = value;
@@ -61,7 +69,7 @@ namespace FClub.Model
             {
                 if (string.IsNullOrEmpty(value))
                 {
-                    throw new ArgumentException("Argument cannot be null or emtpy", nameof(value));
+                    throw new ArgumentException(nameof(value), "Argument cannot be null or emtpy");
                 }
 
                 m_lastName = value;
@@ -76,7 +84,7 @@ namespace FClub.Model
                 // TODO: Check specification
                 if (string.IsNullOrEmpty(value))
                 {
-                    throw new ArgumentException("Argument cannot be null or emtpy", nameof(value));
+                    throw new ArgumentException(nameof(value), "Argument cannot be null or emtpy");
                 }
 
                 m_username = value;
@@ -90,28 +98,28 @@ namespace FClub.Model
             {
                 if (string.IsNullOrEmpty(value))
                 {
-                    throw new ArgumentException("Argument cannot be null or emtpy", nameof(value));
+                    throw new ArgumentException(nameof(value), "Argument cannot be null or emtpy");
                 }
 
                 Regex _emailPattern = new Regex(@"(^[\w-,]+)@(([\w]+\.)+[\w]+(?=[\s]|$))", RegexOptions.Compiled);
-                
+
                 if (!_emailPattern.IsMatch(value))
                 {
-                    throw new ArgumentException($"Email does not follow correct format '{value}''", nameof(value));
+                    throw new ArgumentException(nameof(value), $"Email does not follow correct format '{value}''");
                 }
 
                 m_email = value;
             }
         }
 
-		public decimal Balance
+        public decimal Balance
         {
             get => m_balance;
             set
             {
                 if (value < 50)
                 {
-                    OnUserBalanceNotification?.Invoke(this, value);
+                    OnBalanceNotification?.Invoke(this, value);
                 }
 
                 m_balance = value;

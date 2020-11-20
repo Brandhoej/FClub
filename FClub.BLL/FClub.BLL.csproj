@@ -1,7 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FClub.Core\FClub.Core.csproj" />
+    <ProjectReference Include="..\FClub.DAL\FClub.DAL.csproj" />
+    <ProjectReference Include="..\FClub.Model\FClub.Model.csproj" />
+  </ItemGroup>
 
 </Project>

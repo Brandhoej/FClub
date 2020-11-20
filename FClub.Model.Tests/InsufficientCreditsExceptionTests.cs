@@ -6,31 +6,17 @@ using System.Text;
 
 namespace FClub.Model.Tests
 {
-    [TestClass]
-    public class InsufficientCreditsExceptionTests
+	[TestClass]
+	public class InsufficientCreditsExceptionTests
 	{
-		[TestInitialize]
-		public void TestInitialize()
-		{
-
-		}
-
 		[TestMethod]
 		public void InsufficientCreditsException_Construction1Success_IfValidArguments()
 		{
 			// Arrange
 			InsufficientCreditsException _insufficientCreditsException;
 
-			try
-			{
-				// Act
-				_insufficientCreditsException = new InsufficientCreditsException(null, null);
-			}
-			catch
-			{
-				// Assert
-				Assert.Fail();
-			}
+			// Act
+			_insufficientCreditsException = new InsufficientCreditsException(null, null);
 		}
 
 		[TestMethod]
@@ -39,16 +25,8 @@ namespace FClub.Model.Tests
 			// Arrange
 			InsufficientCreditsException _insufficientCreditsException;
 
-			try
-			{
-				// Act
-				_insufficientCreditsException = new InsufficientCreditsException(null, null);
-			}
-			catch
-			{
-				// Assert
-				Assert.Fail();
-			}
+			// Act
+			_insufficientCreditsException = new InsufficientCreditsException(null, null);
 		}
 
 		[TestMethod]
@@ -57,16 +35,8 @@ namespace FClub.Model.Tests
 			// Arrange
 			InsufficientCreditsException _insufficientCreditsException;
 
-			try
-			{
-				// Act
-				_insufficientCreditsException = new InsufficientCreditsException(null, null, string.Empty);
-			}
-			catch
-			{
-				// Assert
-				Assert.Fail();
-			}
+			// Act
+			_insufficientCreditsException = new InsufficientCreditsException(null, null, string.Empty);
 		}
 
 		[TestMethod]
@@ -75,22 +45,8 @@ namespace FClub.Model.Tests
 			// Arrange
 			InsufficientCreditsException _insufficientCreditsException;
 
-			try
-			{
-				// Act
-				_insufficientCreditsException = new InsufficientCreditsException(null, null, string.Empty, null);
-			}
-			catch
-			{
-				// Assert
-				Assert.Fail();
-			}
-		}
-
-		[TestCleanup]
-		public void TestCleanup()
-		{
-
+			// Act
+			_insufficientCreditsException = new InsufficientCreditsException(null, null, string.Empty, null);
 		}
 	}
 }

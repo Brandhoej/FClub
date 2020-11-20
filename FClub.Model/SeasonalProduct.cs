@@ -4,13 +4,13 @@ using System.Diagnostics;
 namespace FClub.Model
 {
 	public class SeasonalProduct : Product
-    {
-		public SeasonalProduct(int id, string name, decimal price, bool active, bool canBeBoughtOnCredit, DateTime seasonStartDate, DateTime seasonEndDate)
-			: base(id, name, price, active, canBeBoughtOnCredit)
+	{
+		public SeasonalProduct(int id, string name, decimal price, bool canBeBoughtOnCredit, DateTime seasonStartDate, DateTime seasonEndDate)
+			: base(id, name, price, false, canBeBoughtOnCredit)
 		{
 			if (seasonStartDate >= seasonEndDate)
 			{
-				throw new ArgumentException($"Season start cannot be after or on season end {SeasonStartDate < seasonEndDate}", $"{nameof(seasonStartDate)} {nameof(SeasonEndDate)}");
+				throw new ArgumentException($"{nameof(seasonStartDate)} {nameof(SeasonEndDate)}", "Season start cannot be after or on season end");
 			}
 
 			SeasonStartDate = seasonStartDate;
@@ -18,6 +18,13 @@ namespace FClub.Model
 		}
 
 		public DateTime SeasonStartDate { get; }
-        public DateTime SeasonEndDate { get; }
-    }
+		public DateTime SeasonEndDate { get; }
+
+		public override bool Active => IsActiveAt(DateTime.Now);
+
+		public bool IsActiveAt(DateTime dateTime)
+		{
+			return dateTime >= SeasonStartDate && dateTime <= SeasonEndDate;
+		}
+	}
 }
