@@ -1,5 +1,8 @@
-﻿using System;
+﻿using FClub.Core;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace FClub.Model
 {
@@ -7,28 +10,30 @@ namespace FClub.Model
     {
         public event userBalanceNotification OnUserBalanceNotification;
 
-        private static int m_counter = 0;
-
         private string m_firstName;
         private string m_lastName;
         private string m_username;
         private string m_email;
         private decimal m_balance;
 
-        public User(string firstName, string lastName, string username, string email)
-            : this(firstName, lastName, username, email, decimal.Zero)
+        public User(IIdentifier identifier, string firstName, string lastName, string username, string email)
+            : this(identifier ?? throw new ArgumentNullException("Identifier cannot be null", nameof(identifier)), 
+                  firstName, lastName, username, email, decimal.Zero)
 		{ }
 
-        public User(string firstName, string lastName, string username, string email, decimal balance)
+        public User(IIdentifier identifier, string firstName, string lastName, string username, string email, decimal balance)
+            : this(identifier == null ? throw new ArgumentNullException("Identifier cannot be null", nameof(identifier)) : identifier.GetNextId(), 
+                  firstName, lastName, username, email, balance)
+        { }
+
+        protected User(int id, string firstName, string lastName, string username, string email, decimal balance)
         {
-            Id = m_counter;
+            Id = id;
             FirstName = firstName;
             LastName = lastName;
             Username = username;
             Email = email;
             Balance = balance;
-
-            m_counter++;
         }
 
         public delegate void userBalanceNotification(User user, decimal balance);
@@ -83,10 +88,16 @@ namespace FClub.Model
             get => m_email;
             set
             {
-                // TODO: Check specification
                 if (string.IsNullOrEmpty(value))
                 {
                     throw new ArgumentException("Argument cannot be null or emtpy", nameof(value));
+                }
+
+                Regex _emailPattern = new Regex(@"(^[\w-,]+)@(([\w]+\.)+[\w]+(?=[\s]|$))", RegexOptions.Compiled);
+                
+                if (!_emailPattern.IsMatch(value))
+                {
+                    throw new ArgumentException($"Email does not follow correct format '{value}''", nameof(value));
                 }
 
                 m_email = value;
@@ -122,14 +133,6 @@ namespace FClub.Model
         public override int GetHashCode()
         {
             return Id;
-            /*int hashCode = 140654095;
-            hashCode = hashCode * -1521134295 + Id.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(FirstName);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(LastName);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Username);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Email);
-            hashCode = hashCode * -1521134295 + Balance.GetHashCode();
-            return hashCode;*/
         }
 
         public override string ToString()

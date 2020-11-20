@@ -1,11 +1,12 @@
-﻿using System;
+﻿using FClub.Core;
+using System;
 
 namespace FClub.Model
 {
     public class InsertCashTransaction : Transaction
     {
-        public InsertCashTransaction(User user, decimal amount)
-            : base(user, amount)
+        public InsertCashTransaction(IIdentifier identifier, User user, decimal amount)
+            : base(identifier, user, amount)
         {
             if (amount < 0)
             {

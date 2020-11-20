@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -15,7 +15,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FClub.Core\FClub.Core.csproj" />
-    <ProjectReference Include="..\FClub.Model\FClub.Model.csproj" />
   </ItemGroup>
 
 </Project>
