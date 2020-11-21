@@ -24,7 +24,7 @@ namespace FClub.UI
 		void DisplayTooManyArgumentsError(string command);
 		void DisplayAdminCommandNotFoundMessage(string adminCommand);
 
-		void Close();
+		void Stop();
 
 		event stregsystemEvent CommandEntered;
 	}

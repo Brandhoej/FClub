@@ -38,9 +38,7 @@ namespace FClub.UI
 
 		public void DisplayUserBuysProduct(int count, BuyTransaction transaction)
 		{
-			// I dont know what this function is supposed to do. Maybe show "count" amount of transactions?
-			// Rename from "DisplayUserBuysProduct" to "DisplayUserBuyTransactions(string username, int count)"?
-			throw new NotImplementedException();
+			Console.WriteLine($"{transaction.User.Username} has bought {transaction.Product.Name} at a price of {transaction.Product.Price} {count} time(s)");
 		}
 
 		public void DisplayUserInfo(User user)
@@ -48,7 +46,6 @@ namespace FClub.UI
 			Console.WriteLine($"User: {user}");
 		}
 
-		#region Errors
 		public void DisplayInsufficientCash(User user, Product product)
 		{
 			Console.WriteLine($"{user} has insufficient funds for {product.Name} price: {product.Price}");
@@ -78,9 +75,8 @@ namespace FClub.UI
 		{
 			Console.WriteLine($"User {username} not found");
 		}
-		#endregion
 
-		public void Close()
+		public void Stop()
 		{
 			Running = false;
 		}

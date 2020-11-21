@@ -7,7 +7,10 @@ namespace FClub.Model
 	{
 		public InsufficientCreditsException(User user, Product product)
 			: base($"Insufficient credit for {user} to buy {product}")
-		{ }
+		{
+			User = user;
+			Product = product;
+		}
 
 		public InsufficientCreditsException(User user, Product product, string message)
 			: base($"Insufficient credit for {user} to buy {product} - {message}")
@@ -20,5 +23,8 @@ namespace FClub.Model
 		protected InsufficientCreditsException(SerializationInfo info, StreamingContext context)
 			: base(info, context)
 		{ }
+
+		public User User { get; }
+		public Product Product { get; }
 	}
 }

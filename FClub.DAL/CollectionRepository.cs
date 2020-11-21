@@ -41,7 +41,14 @@ namespace FClub.DAL
 				throw new ArgumentNullException(nameof(predicate), "Predicate cannot be null");
 			}
 
-			return Collection.First(curr => predicate(curr));
+			try
+			{
+				return Collection.First(curr => predicate(curr));
+			}
+			catch
+			{
+				return default;
+			}
 		}
 
 		public ICollection<T> FindAll(Predicate<T> predicate)

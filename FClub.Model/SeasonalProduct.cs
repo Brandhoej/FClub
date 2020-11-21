@@ -20,7 +20,11 @@ namespace FClub.Model
 		public DateTime SeasonStartDate { get; }
 		public DateTime SeasonEndDate { get; }
 
-		public override bool Active => IsActiveAt(DateTime.Now);
+		public override bool Active
+		{
+			get => IsActiveAt(DateTime.Now);
+			set => throw new AccessViolationException($"Cannot set {nameof(Active)} for a seasonal product");
+		}
 
 		public bool IsActiveAt(DateTime dateTime)
 		{

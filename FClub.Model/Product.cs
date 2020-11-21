@@ -32,7 +32,7 @@ namespace FClub.Model
 		public string Name { get; }
 		public decimal Price { get; }
 
-		public virtual bool Active { get; }
-		public virtual bool CanBeBoughtOnCredit { get; }
+		public virtual bool Active { get; set; }
+		public virtual bool CanBeBoughtOnCredit { get; set; }
 	}
 }
