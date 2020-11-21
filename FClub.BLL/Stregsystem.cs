@@ -25,8 +25,6 @@ namespace FClub.BLL
 			Users = users ?? throw new ArgumentNullException(nameof(Users), "User repository cannot be null");
 			Transactions = transactions ?? throw new ArgumentNullException(nameof(Transactions), "Transaction repository cannot be null");
 			TransactionIdentifier = transactionIdentifier ?? throw new ArgumentNullException(nameof(transactionIdentifier), "Transaction identifier cannot be null");
-
-			Users.Insert(new User(1, "Andreas", "Brandhoej", "Hyw", "akbr18@student.aau.dk", 100));
 		}
 
 		private IRepository<Product> Products { get; }

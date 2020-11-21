@@ -1,6 +1,7 @@
 ﻿using FClub.Model;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace FClub.DAL
 {
@@ -9,6 +10,10 @@ namespace FClub.DAL
 		private IRepository<Transaction> m_transactions;
 		private IRepository<User> m_users;
 		private IRepository<Product> m_products;
+
+		public HashsetUnitOfWork(string dataProductsPath, string dataUsersPath)
+			: this(new HashsetFClubContext(dataProductsPath, dataUsersPath))
+		{ }
 
 		public HashsetUnitOfWork(IFClubContext context)
 		{

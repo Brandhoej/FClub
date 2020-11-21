@@ -9,4 +9,13 @@
     <ProjectReference Include="..\FClub.Model\FClub.Model.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Data\products.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\users.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

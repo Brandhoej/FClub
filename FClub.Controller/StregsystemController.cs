@@ -20,7 +20,7 @@ namespace FClub.Controller
 		private readonly IStregsystem m_stregsystem;
 		private readonly IStregsystemCommandParser m_parser;
 
-		public StregsystemController(IStregsystemUI stregsystemUI, IStregsystem stregsystem)
+		public StregsystemController(IStregsystemUI stregsystemUI, IStregsystem stregsystem, string index = "/home")
 		{
 			m_stregsystemUI = stregsystemUI;
 			m_stregsystem = stregsystem;
@@ -42,15 +42,28 @@ namespace FClub.Controller
 				// User
 				new StregsystemCommand("/user", parameters => User(parameters)),
 				new StregsystemCommand("/buy", parameters  => Buy(parameters)),
+				new StregsystemCommand("/home", parameters => Home(parameters)),
 			};
 
 			m_stregsystemUI.CommandEntered += StregsystemUI_CommandEntered;
+			Execute(index);
 		}
 
 		public bool Execute(string input)
 		{
 			StregsystemCommand _cmd = m_parser.Parse(input);
 			return _cmd.Run(input);
+		}
+
+		private bool Home(params object[] parameters)
+		{
+			if (parameters.Length != 0)
+			{
+				m_stregsystemUI.DisplayTooManyArgumentsError("Home does not require any parameters");
+				return false;
+			}
+			m_stregsystemUI.DisplayProducts(m_stregsystem.ActiveProducts);
+			return true;
 		}
 
 		private bool Buy(params object[] parameters)
@@ -98,7 +111,7 @@ namespace FClub.Controller
 				return default;
 			}
 
-			Product product = m_stregsystem.GetProductById((int)parameters[1]);
+			Product product = m_stregsystem.GetProductById(int.Parse(parameters[1].ToString()));
 			if (product == null)
 			{
 				m_stregsystemUI.DisplayProductNotFound(parameters[1].ToString());
@@ -108,7 +121,6 @@ namespace FClub.Controller
 			try
 			{
 				BuyTransaction _buyTransaction = m_stregsystem.BuyProduct(_user, product);
-				m_stregsystemUI.DisplayUserBuysProduct(_buyTransaction);
 				return _buyTransaction;
 			}
 			catch (InsufficientCreditsException)
@@ -159,7 +171,6 @@ namespace FClub.Controller
 				for (int i = 0; i < _amount; i++)
 				{
 					_buyTransaction = m_stregsystem.BuyProduct(_user, _product);
-					m_stregsystemUI.DisplayUserBuysProduct(_buyTransaction);
 				}
 				return _buyTransaction;
 			}
