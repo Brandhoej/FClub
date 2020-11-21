@@ -7,19 +7,19 @@ using System.Linq;
 
 namespace FClub.BLL
 {
-	public class StringSystem : IStringSystem
+	public class Stregsystem : IStregsystem
 	{
 		public event User.balanceNotification UserBalanceWarning;
 
-		public StringSystem(IUnitOfWork unitOfWork)
+		public Stregsystem(IUnitOfWork unitOfWork)
 			: this(unitOfWork.Products, unitOfWork.Users, unitOfWork.Transactions)
 		{ }
 
-		public StringSystem(IRepository<Product> products, IRepository<User> users, IRepository<Transaction> transactions)
+		public Stregsystem(IRepository<Product> products, IRepository<User> users, IRepository<Transaction> transactions)
 			: this(products, users, transactions, new Incrementalidentifier())
 		{ }
 
-		public StringSystem(IRepository<Product> products, IRepository<User> users, IRepository<Transaction> transactions, IIdentifier transactionIdentifier)
+		public Stregsystem(IRepository<Product> products, IRepository<User> users, IRepository<Transaction> transactions, IIdentifier transactionIdentifier)
 		{
 			Products = products ?? throw new ArgumentNullException(nameof(Products), "Product repository cannot be null");
 			Users = users ?? throw new ArgumentNullException(nameof(Users), "User repository cannot be null");
@@ -65,16 +65,9 @@ namespace FClub.BLL
 				throw new ArgumentNullException(nameof(product), "Product cannot be null");
 			}
 
-			try
-			{
-				BuyTransaction _buyTransaction = new BuyTransaction(TransactionIdentifier, user, product);
-				ExecuteTransaction(_buyTransaction);
-				return _buyTransaction;
-			}
-			catch
-			{
-				throw;
-			}
+			BuyTransaction _buyTransaction = new BuyTransaction(TransactionIdentifier, user, product);
+			ExecuteTransaction(_buyTransaction);
+			return _buyTransaction;
 		}
 
 		public Product GetProductById(int id)

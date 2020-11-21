@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FClub.BLL\FClub.BLL.csproj" />
+    <ProjectReference Include="..\FClub.Controller\FClub.Controller.csproj" />
+    <ProjectReference Include="..\FClub.DAL\FClub.DAL.csproj" />
+    <ProjectReference Include="..\FClub.UI\FClub.UI.csproj" />
+  </ItemGroup>
+
+</Project>

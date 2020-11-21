@@ -10,7 +10,7 @@ using System.Text;
 namespace FClub.BLL.Tests
 {
 	[TestClass]
-	public class StringSystemTests
+	public class StregsystemTests
 	{
 		[TestMethod]
 		public void StringSystem_ConstructionSucessfully_True()
@@ -18,12 +18,11 @@ namespace FClub.BLL.Tests
 			// Arrange
 			IFClubContext _fClubContext;
 			IUnitOfWork _unitOfWork;
-			IStringSystem _stringSystem;
 
 			// Act
 			_fClubContext = new HashsetFClubContext();
 			_unitOfWork = new HashsetUnitOfWork(_fClubContext);
-			new StringSystem(_unitOfWork);
+			new Stregsystem(_unitOfWork);
 		}
 
 		[TestMethod]
@@ -42,7 +41,7 @@ namespace FClub.BLL.Tests
 				_users = new CollectionRepository<User>(new HashSet<User>());
 				_transactions = new CollectionRepository<Transaction>(new HashSet<Transaction>());
 				_identifier = new Incrementalidentifier();
-				new StringSystem(_products, _users, _transactions, _identifier);
+				new Stregsystem(_products, _users, _transactions, _identifier);
 			}
 
 			// Assert
@@ -65,7 +64,7 @@ namespace FClub.BLL.Tests
 				_users = null;
 				_transactions = new CollectionRepository<Transaction>(new HashSet<Transaction>());
 				_identifier = new Incrementalidentifier();
-				new StringSystem(_products, _users, _transactions, _identifier);
+				new Stregsystem(_products, _users, _transactions, _identifier);
 			}
 
 			// Assert
@@ -88,7 +87,7 @@ namespace FClub.BLL.Tests
 				_users = new CollectionRepository<User>(new HashSet<User>());
 				_transactions = null;
 				_identifier = new Incrementalidentifier();
-				new StringSystem(_products, _users, _transactions, _identifier);
+				new Stregsystem(_products, _users, _transactions, _identifier);
 			}
 
 			// Assert
@@ -111,7 +110,7 @@ namespace FClub.BLL.Tests
 				_users = new CollectionRepository<User>(new HashSet<User>());
 				_transactions = new CollectionRepository<Transaction>(new HashSet<Transaction>());
 				_identifier = null;
-				new StringSystem(_products, _users, _transactions, _identifier);
+				new Stregsystem(_products, _users, _transactions, _identifier);
 			}
 
 			// Assert
@@ -126,7 +125,7 @@ namespace FClub.BLL.Tests
 			IRepository<User> _users;
 			IRepository<Transaction> _transactions;
 			IIdentifier _identifier;
-			IStringSystem _stringSystem;
+			IStregsystem _stringSystem;
 
 			// Act
 			_products = new CollectionRepository<Product>(new HashSet<Product>()
@@ -143,7 +142,7 @@ namespace FClub.BLL.Tests
 			_users = new CollectionRepository<User>(new HashSet<User>());
 			_transactions = new CollectionRepository<Transaction>(new HashSet<Transaction>());
 			_identifier = new Incrementalidentifier();
-			_stringSystem = new StringSystem(_products, _users, _transactions, _identifier);
+			_stringSystem = new Stregsystem(_products, _users, _transactions, _identifier);
 			IEnumerable<Product> _activeProducts = _stringSystem.ActiveProducts;
 
 			// Assert
@@ -169,7 +168,7 @@ namespace FClub.BLL.Tests
 			IRepository<User> _users;
 			IRepository<Transaction> _transactions;
 			IIdentifier _identifier;
-			IStringSystem _stringSystem;
+			IStregsystem _stringSystem;
 
 			// Act
 			_user = new User(1, "FirstName", "LastName", "Username", "akbr18@student.aau.dk", _startBalance);
@@ -177,7 +176,7 @@ namespace FClub.BLL.Tests
 			_users = new CollectionRepository<User>(new HashSet<User>());
 			_transactions = new CollectionRepository<Transaction>(new HashSet<Transaction>());
 			_identifier = new Incrementalidentifier();
-			_stringSystem = new StringSystem(_products, _users, _transactions, _identifier);
+			_stringSystem = new Stregsystem(_products, _users, _transactions, _identifier);
 			_stringSystem.AddCreditsToAccount(_user, _transactionBalance);
 
 			// Assert
@@ -185,7 +184,65 @@ namespace FClub.BLL.Tests
 		}
 
 		[TestMethod]
-		public void BuyProduct_IncreasesBalanceOfUser_True()
+		public void AddCreditsToAccount_ThrowsArgumentNullException_IfUserIsNull()
+		{
+			// Arrange
+			const decimal _startBalance = 100;
+			const decimal _transactionBalance = 10;
+			User _user;
+			IRepository<Product> _products;
+			IRepository<User> _users;
+			IRepository<Transaction> _transactions;
+			IIdentifier _identifier;
+			IStregsystem _stringSystem;
+
+			// Act
+			_user = null;
+			_products = new CollectionRepository<Product>(new HashSet<Product>());
+			_users = new CollectionRepository<User>(new HashSet<User>());
+			_transactions = new CollectionRepository<Transaction>(new HashSet<Transaction>());
+			_identifier = new Incrementalidentifier();
+			_stringSystem = new Stregsystem(_products, _users, _transactions, _identifier);
+			void Test()
+			{
+				_stringSystem.AddCreditsToAccount(_user, _transactionBalance);
+			}
+
+			// Assert
+			Assert.ThrowsException<ArgumentNullException>(Test);
+		}
+
+		[TestMethod]
+		public void AddCreditsToAccount_ThrowsArgumentException_IfAmountIsLessThanZero()
+		{
+			// Arrange
+			const decimal _startBalance = 100;
+			const decimal _transactionBalance = -10;
+			User _user;
+			IRepository<Product> _products;
+			IRepository<User> _users;
+			IRepository<Transaction> _transactions;
+			IIdentifier _identifier;
+			IStregsystem _stringSystem;
+
+			// Act
+			_user = new User(1, "FirstName", "LastName", "Username", "akbr18@student.aau.dk", _startBalance);
+			_products = new CollectionRepository<Product>(new HashSet<Product>());
+			_users = new CollectionRepository<User>(new HashSet<User>());
+			_transactions = new CollectionRepository<Transaction>(new HashSet<Transaction>());
+			_identifier = new Incrementalidentifier();
+			_stringSystem = new Stregsystem(_products, _users, _transactions, _identifier);
+			void Test()
+			{
+				_stringSystem.AddCreditsToAccount(_user, _transactionBalance);
+			}
+
+			// Assert
+			Assert.ThrowsException<ArgumentException>(Test);
+		}
+
+		[TestMethod]
+		public void BuyProduct_DecreasesBalanceOfUser_True()
 		{
 			// Arrange
 			const decimal _startBalance = 100;
@@ -195,7 +252,7 @@ namespace FClub.BLL.Tests
 			IRepository<User> _users;
 			IRepository<Transaction> _transactions;
 			IIdentifier _identifier;
-			IStringSystem _stringSystem;
+			IStregsystem _stringSystem;
 
 			// Act
 			_product = new Product(1, "Name", 10, true, true);
@@ -204,11 +261,71 @@ namespace FClub.BLL.Tests
 			_users = new CollectionRepository<User>(new HashSet<User>());
 			_transactions = new CollectionRepository<Transaction>(new HashSet<Transaction>());
 			_identifier = new Incrementalidentifier();
-			_stringSystem = new StringSystem(_products, _users, _transactions, _identifier);
+			_stringSystem = new Stregsystem(_products, _users, _transactions, _identifier);
 			_stringSystem.BuyProduct(_user, _product);
 
 			// Assert
 			Assert.AreEqual(_startBalance - _product.Price, _user.Balance);
+		}
+
+		[TestMethod]
+		public void BuyProduct_ThrowArgumentNullException_IfUserIsNull()
+		{
+			// Arrange
+			const decimal _startBalance = 100;
+			Product _product;
+			User _user;
+			IRepository<Product> _products;
+			IRepository<User> _users;
+			IRepository<Transaction> _transactions;
+			IIdentifier _identifier;
+			IStregsystem _stringSystem;
+
+			// Act
+			_product = new Product(1, "Name", 10, true, true);
+			_user = null;
+			_products = new CollectionRepository<Product>(new HashSet<Product>());
+			_users = new CollectionRepository<User>(new HashSet<User>());
+			_transactions = new CollectionRepository<Transaction>(new HashSet<Transaction>());
+			_identifier = new Incrementalidentifier();
+			_stringSystem = new Stregsystem(_products, _users, _transactions, _identifier);
+			void Test()
+			{
+				_stringSystem.BuyProduct(_user, _product);
+			}
+
+			// Assert
+			Assert.ThrowsException<ArgumentNullException>(Test);
+		}
+
+		[TestMethod]
+		public void BuyProduct_ThrowArgumentNullException_IfProductIsNull()
+		{
+			// Arrange
+			const decimal _startBalance = 100;
+			Product _product;
+			User _user;
+			IRepository<Product> _products;
+			IRepository<User> _users;
+			IRepository<Transaction> _transactions;
+			IIdentifier _identifier;
+			IStregsystem _stringSystem;
+
+			// Act
+			_product = null;
+			_user = new User(1, "FirstName", "LastName", "Username", "akbr18@student.aau.dk", _startBalance);
+			_products = new CollectionRepository<Product>(new HashSet<Product>());
+			_users = new CollectionRepository<User>(new HashSet<User>());
+			_transactions = new CollectionRepository<Transaction>(new HashSet<Transaction>());
+			_identifier = new Incrementalidentifier();
+			_stringSystem = new Stregsystem(_products, _users, _transactions, _identifier);
+			void Test()
+			{
+				_stringSystem.BuyProduct(_user, _product);
+			}
+
+			// Assert
+			Assert.ThrowsException<ArgumentNullException>(Test);
 		}
 
 		[TestMethod]
@@ -219,7 +336,7 @@ namespace FClub.BLL.Tests
 			IRepository<User> _users;
 			IRepository<Transaction> _transactions;
 			IIdentifier _identifier;
-			IStringSystem _stringSystem;
+			IStregsystem _stringSystem;
 
 			// Act
 			_products = new CollectionRepository<Product>(new HashSet<Product>()
@@ -236,7 +353,7 @@ namespace FClub.BLL.Tests
 			_users = new CollectionRepository<User>(new HashSet<User>());
 			_transactions = new CollectionRepository<Transaction>(new HashSet<Transaction>());
 			_identifier = new Incrementalidentifier();
-			_stringSystem = new StringSystem(_products, _users, _transactions, _identifier);
+			_stringSystem = new Stregsystem(_products, _users, _transactions, _identifier);
 
 			// Assert
 			Assert.AreEqual("Product1", _stringSystem.GetProductById(1).Name);
@@ -258,7 +375,7 @@ namespace FClub.BLL.Tests
 			IRepository<User> _users;
 			IRepository<Transaction> _transactions;
 			IIdentifier _identifier;
-			IStringSystem _stringSystem;
+			IStregsystem _stringSystem;
 			User _user;
 			Product _product1, _product2, _product3, _product4;
 			IList<Transaction> _userTransactions;
@@ -279,7 +396,7 @@ namespace FClub.BLL.Tests
 			_users = new CollectionRepository<User>(new HashSet<User>());
 			_transactions = new CollectionRepository<Transaction>(new HashSet<Transaction>());
 			_identifier = new Incrementalidentifier();
-			_stringSystem = new StringSystem(_products, _users, _transactions, _identifier);
+			_stringSystem = new Stregsystem(_products, _users, _transactions, _identifier);
 			_stringSystem.BuyProduct(_user, _product1);
 			_stringSystem.BuyProduct(_user, _product3);
 			_stringSystem.BuyProduct(_user, _product4);
@@ -293,6 +410,148 @@ namespace FClub.BLL.Tests
 			Assert.AreEqual(-40, _userTransactions[2].Amount);
 			Assert.AreEqual(true, _userTransactions[0].Date < _userTransactions[1].Date);
 			Assert.AreEqual(true, _userTransactions[1].Date < _userTransactions[2].Date);
+		}
+
+		[TestMethod]
+		public void GetTransactions_ThrowsArgumentNullException_IfUserIsNull()
+		{
+			// Arrange
+			const decimal _startBalance = 1000;
+			IRepository<Product> _products;
+			IRepository<User> _users;
+			IRepository<Transaction> _transactions;
+			IIdentifier _identifier;
+			IStregsystem _stringSystem;
+			User _user;
+			Product _product1, _product2, _product3, _product4;
+			IList<Transaction> _userTransactions;
+
+			// Act
+			_user = null;
+			_product1 = new Product(1, "Product1", 10, false, false);
+			_product2 = new Product(2, "Product2", 20, false, true);
+			_product3 = new Product(3, "Product2", 30, false, true);
+			_product4 = new Product(4, "Product2", 40, false, true);
+			_products = new CollectionRepository<Product>(new HashSet<Product>()
+			{
+				_product1,
+				_product2,
+				_product3,
+				_product4
+			});
+			_users = new CollectionRepository<User>(new HashSet<User>());
+			_transactions = new CollectionRepository<Transaction>(new HashSet<Transaction>());
+			_identifier = new Incrementalidentifier();
+			_stringSystem = new Stregsystem(_products, _users, _transactions, _identifier);
+			void Test()
+			{
+				_stringSystem.GetTransactions(_user, 10);
+			}
+
+			// Assert
+			Assert.ThrowsException<ArgumentNullException>(Test);
+		}
+
+		[TestMethod]
+		public void GetUserByUsername_FindsUserByName_IfUserCouldBeFound()
+		{
+			// Arrange
+			User _user;
+			IRepository<Product> _products;
+			IRepository<User> _users;
+			IRepository<Transaction> _transactions;
+			IIdentifier _identifier;
+			IStregsystem _stringSystem;
+
+			// Act
+			_user = new User(1, "Andreas", "Bradnhoej", "Hyw", "akbr18@student.aau.dk", 0);
+			_products = new CollectionRepository<Product>(new HashSet<Product>());
+			_users = new CollectionRepository<User>(new HashSet<User>()
+			{
+				_user
+			});
+			_transactions = new CollectionRepository<Transaction>(new HashSet<Transaction>());
+			_identifier = new Incrementalidentifier();
+			_stringSystem = new Stregsystem(_products, _users, _transactions, _identifier);
+
+			// Assert
+			Assert.AreEqual(_user, _stringSystem.GetUserByUsername("Hyw"));
+		}
+
+		[TestMethod]
+		public void GetUsers2_FindsUserByName_IfUserCouldBeFound()
+		{
+			// Arrange
+			User _user1, _user2, _user3, _user4, _user5;
+			IRepository<Product> _products;
+			IRepository<User> _users;
+			IRepository<Transaction> _transactions;
+			IIdentifier _identifier;
+			IStregsystem _stringSystem;
+			IEnumerable<User> _UserResult;
+
+			// Act
+			_user1 = new User(1, "Andreas", "Bradnhoej", "Hyw", "akbr18@student.aau.dk", 0);
+			_user2 = new User(2, "Andreas", "Bradnhoej", "Hyw", "akbr18@student.aau.dk", 0);
+			_user3 = new User(3, "Andreas", "Bradnhoej", "Hyw", "akbr18@student.aau.dk", 0);
+			_user4 = new User(4, "Andreas", "Bradnhoej", "Hyw", "akbr18@student.aau.dk", 0);
+			_user5 = new User(5, "Andreas", "Bradnhoej", "Hyw", "akbr18@student.aau.dk", 0);
+			_products = new CollectionRepository<Product>(new HashSet<Product>());
+			_users = new CollectionRepository<User>(new HashSet<User>()
+			{
+				_user1,
+				_user2,
+				_user3,
+				_user4,
+				_user5
+			});
+			_transactions = new CollectionRepository<Transaction>(new HashSet<Transaction>());
+			_identifier = new Incrementalidentifier();
+			_stringSystem = new Stregsystem(_products, _users, _transactions, _identifier);
+			_UserResult = _stringSystem.GetUsers(u => u.Id >= 2 && u.Id <= 4);
+
+			// Assert
+			Assert.AreEqual(3, _UserResult.Count());
+			Assert.AreEqual(true, _UserResult.All(u => u.Id >= 2 && u.Id <= 4));
+		}
+
+		[TestMethod]
+		public void GetUsers_ThrowsArgumentNullException_IfPredicateIsNull()
+		{
+			// Arrange
+			User _user1, _user2, _user3, _user4, _user5;
+			IRepository<Product> _products;
+			IRepository<User> _users;
+			IRepository<Transaction> _transactions;
+			IIdentifier _identifier;
+			IStregsystem _stringSystem;
+			IEnumerable<User> _UserResult;
+
+			// Act
+			_user1 = new User(1, "Andreas", "Bradnhoej", "Hyw", "akbr18@student.aau.dk", 0);
+			_user2 = new User(2, "Andreas", "Bradnhoej", "Hyw", "akbr18@student.aau.dk", 0);
+			_user3 = new User(3, "Andreas", "Bradnhoej", "Hyw", "akbr18@student.aau.dk", 0);
+			_user4 = new User(4, "Andreas", "Bradnhoej", "Hyw", "akbr18@student.aau.dk", 0);
+			_user5 = new User(5, "Andreas", "Bradnhoej", "Hyw", "akbr18@student.aau.dk", 0);
+			_products = new CollectionRepository<Product>(new HashSet<Product>());
+			_users = new CollectionRepository<User>(new HashSet<User>()
+			{
+				_user1,
+				_user2,
+				_user3,
+				_user4,
+				_user5
+			});
+			_transactions = new CollectionRepository<Transaction>(new HashSet<Transaction>());
+			_identifier = new Incrementalidentifier();
+			_stringSystem = new Stregsystem(_products, _users, _transactions, _identifier);
+			void Test()
+			{
+				_UserResult = _stringSystem.GetUsers(null);
+			}
+
+			// Assert
+			Assert.ThrowsException<ArgumentNullException>(Test);
 		}
 	}
 }

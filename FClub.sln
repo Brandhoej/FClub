@@ -3,23 +3,27 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30523.141
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FClub", "FClub\FClub.csproj", "{673E9C88-1C41-4E5A-8CDA-7C2DCDE0D472}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FClub.Model", "FClub.Model\FClub.Model.csproj", "{D02C2B72-27E1-401D-B80B-E25FFE8D3348}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FClub.Model.Tests", "FClub.Model.Tests\FClub.Model.Tests.csproj", "{B8C273A3-FFA9-457A-9A82-465AAB07ED3F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FClub.Core", "FClub.Core\FClub.Core.csproj", "{7EC94BC6-93CC-4A55-92A1-2C01961AD9FF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FClub.Core", "FClub.Core\FClub.Core.csproj", "{7EC94BC6-93CC-4A55-92A1-2C01961AD9FF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FClub.Core.Tests", "FClub.Core.Tests\FClub.Core.Tests.csproj", "{40B51CEE-07F4-4E76-AC35-C4F362348A32}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FClub.Core.Tests", "FClub.Core.Tests\FClub.Core.Tests.csproj", "{40B51CEE-07F4-4E76-AC35-C4F362348A32}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FClub.DAL", "FClub.DAL\FClub.DAL.csproj", "{F8DEDCCE-F294-4F63-9330-FEB2FC0FC525}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FClub.DAL", "FClub.DAL\FClub.DAL.csproj", "{F8DEDCCE-F294-4F63-9330-FEB2FC0FC525}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FClub.BLL", "FClub.BLL\FClub.BLL.csproj", "{AA4018C8-B90A-417B-B79B-67845136F3A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FClub.BLL", "FClub.BLL\FClub.BLL.csproj", "{AA4018C8-B90A-417B-B79B-67845136F3A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FClub.DAL.Tests", "FClub.DAL.Tests\FClub.DAL.Tests.csproj", "{C2442A57-99E6-4569-8A7C-DCA42A3B3045}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FClub.DAL.Tests", "FClub.DAL.Tests\FClub.DAL.Tests.csproj", "{C2442A57-99E6-4569-8A7C-DCA42A3B3045}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FClub.BLL.Tests", "FClub.BLL.Tests\FClub.BLL.Tests.csproj", "{546A35BC-DAD0-427E-8558-4261C3656E65}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FClub.BLL.Tests", "FClub.BLL.Tests\FClub.BLL.Tests.csproj", "{546A35BC-DAD0-427E-8558-4261C3656E65}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FClub.CLI", "FClub.CLI\FClub.CLI.csproj", "{7C8FB00D-4B98-48BC-B692-69FF1BA96AAB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FClub.UI", "FClub.UI\FClub.UI.csproj", "{9DF8D394-2A11-414A-9E06-E7BD618F3033}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FClub.Controller", "FClub.Controller\FClub.Controller.csproj", "{42177796-C736-493A-8298-064047A86EB0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,10 +31,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{673E9C88-1C41-4E5A-8CDA-7C2DCDE0D472}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{673E9C88-1C41-4E5A-8CDA-7C2DCDE0D472}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{673E9C88-1C41-4E5A-8CDA-7C2DCDE0D472}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{673E9C88-1C41-4E5A-8CDA-7C2DCDE0D472}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D02C2B72-27E1-401D-B80B-E25FFE8D3348}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D02C2B72-27E1-401D-B80B-E25FFE8D3348}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D02C2B72-27E1-401D-B80B-E25FFE8D3348}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -63,6 +63,18 @@ Global
 		{546A35BC-DAD0-427E-8558-4261C3656E65}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{546A35BC-DAD0-427E-8558-4261C3656E65}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{546A35BC-DAD0-427E-8558-4261C3656E65}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C8FB00D-4B98-48BC-B692-69FF1BA96AAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C8FB00D-4B98-48BC-B692-69FF1BA96AAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C8FB00D-4B98-48BC-B692-69FF1BA96AAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C8FB00D-4B98-48BC-B692-69FF1BA96AAB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DF8D394-2A11-414A-9E06-E7BD618F3033}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DF8D394-2A11-414A-9E06-E7BD618F3033}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DF8D394-2A11-414A-9E06-E7BD618F3033}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DF8D394-2A11-414A-9E06-E7BD618F3033}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42177796-C736-493A-8298-064047A86EB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42177796-C736-493A-8298-064047A86EB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42177796-C736-493A-8298-064047A86EB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42177796-C736-493A-8298-064047A86EB0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
