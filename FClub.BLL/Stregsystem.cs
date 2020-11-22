@@ -30,6 +30,9 @@ namespace FClub.BLL
 			Transactions = transactions ?? throw new ArgumentNullException(nameof(Transactions), "Transaction repository cannot be null");
 			TransactionIdentifier = transactionIdentifier ?? throw new ArgumentNullException(nameof(transactionIdentifier), "Transaction identifier cannot be null");
 			m_transactionLogger = new TransactionLogger(Path.Combine(Environment.CurrentDirectory, "Log"), "transaction_log.txt");
+
+			// TODO: Remove
+			Users.Insert(new User(99, "Andreas", "Brandhoej", "Hyw", "akbr18@student.aau.dk", 100));
 		}
 
 		private IRepository<Product> Products { get; }

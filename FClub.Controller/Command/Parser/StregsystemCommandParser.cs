@@ -2,33 +2,49 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using System.Collections;
 
 namespace FClub.Controller.Command.Parser
 {
-	internal interface IStregsystemCommandParser : ICollection<StregsystemCommand>
+	internal interface IStregsystemCommandParser
 	{
-		StregsystemCommand DefaultCommand { get; }
-		StregsystemCommand Parse(string input);
+		void Add(string endpoint, string name);
+		StregsystemCommand Parse(string name, string input);
+		IStregsystemCommandResult Run(object thisRef, string name, string input);
 	}
 
-	internal class StregsystemCommandParser : List<StregsystemCommand>, IStregsystemCommandParser
+	internal class StregsystemCommandParser : IStregsystemCommandParser
 	{
-		private readonly StregsystemCommand m_stregsystemCommand;
+		private readonly Type m_controller;
+		private ICollection<StregsystemCommand> m_commands;
 
-		public StregsystemCommandParser()
-			: this(default)
-		{ }
-
-		public StregsystemCommandParser(StregsystemCommandStatement stregsystemCommandStatement)
+		public StregsystemCommandParser(Type Controller)
 		{
-			m_stregsystemCommand = new StregsystemCommand(stregsystemCommandStatement);
+			m_controller = Controller;
+			m_commands = new HashSet<StregsystemCommand>();
 		}
 
-		public StregsystemCommand DefaultCommand => m_stregsystemCommand;
-
-		public StregsystemCommand Parse(string input)
+		public void Add(string endpoint, string name)
 		{
-			return Find(curr => curr.Match(input)) ?? m_stregsystemCommand;
+			m_commands.Add(new StregsystemCommand(name, m_controller.GetMethod(endpoint)));
+		}
+
+		public StregsystemCommand Parse(string name, string input)
+		{
+			try
+			{
+				return m_commands.First(curr => curr.Match(name, input));
+			}
+			catch
+			{
+				return default;
+			}
+		}
+
+		public IStregsystemCommandResult Run(object thisRef, string name, string input)
+		{
+			StregsystemCommand cmd = Parse(name, input);
+			return cmd != null ? cmd.Run(thisRef, input) : default;
 		}
 	}
 }

@@ -19,8 +19,8 @@ namespace FClub.CLI
 			IUnitOfWork _unitOfWork = new HashsetUnitOfWork(_context);
 			IStregsystem _stregsystem = new Stregsystem(_unitOfWork);
 			IStregsystemUI _stregsystemUI = new StregsystemCLI();
-			IStregsystemController _stregsystemController = new StregsystemController(_stregsystemUI, _stregsystem);
-
+			IStregsystemController _stregsystemController = new StregsystemController(_stregsystem, _stregsystemUI);
+			_stregsystemController.Execute("/products");
 			_stregsystemUI.Start();
 		}
 	}

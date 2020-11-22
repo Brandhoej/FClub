@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FClub.UI
 {
-	public delegate void stregsystemEvent(string command);
+	public delegate string stregsystemEvent(string name, string parameters);
 
 	public interface IStregsystemUI
 	{

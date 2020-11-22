@@ -1,109 +1,120 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Reflection;
 
 namespace FClub.Controller.Command
 {
-	public delegate bool StregsystemCommandStatement(params object[] parameters);
+	public interface IStregsystemCommandResult
+	{
+
+	}
 
 	internal interface IStregsystemCommand
 	{
-		string Format { get; }
-		StregsystemCommandStatement StregsystemCommandStatement { get; }
+		IStregsystemCommandResult Run(object thisRef, string input);
+		IStregsystemCommandResult Run(object thisRef, object[] parameters);
 
-		bool Run(string input);
-		bool Run(object[] parameters);
-		bool Match(string input);
+		bool Match(string name, string input);
 		object[] GetParamsFromInput(string input);
 	}
 
 	internal class StregsystemCommand : IStregsystemCommand
 	{
-		public StregsystemCommand(StregsystemCommandStatement stregsystemCommand)
-			: this(string.Empty, stregsystemCommand)
-		{ }
+		private readonly string m_name;
 
-		public StregsystemCommand(string format, StregsystemCommandStatement stregsystemCommand)
+		public StregsystemCommand(string name, MethodInfo endpoint)
 		{
-			Format = format;
-			StregsystemCommandStatement = stregsystemCommand ?? throw new ArgumentNullException(nameof(stregsystemCommand));
+			m_name = name;
+			MethodInfo = endpoint;
 		}
 
-		public string Format { get; }
-		public StregsystemCommandStatement StregsystemCommandStatement { get; }
+		private MethodInfo MethodInfo;
+		private ParameterInfo[] ParameterInfos => MethodInfo.GetParameters();
 
-		public bool Run(string input)
+		public IStregsystemCommandResult Run(object thisRef, string input)
 		{
-			object[] parameters = GetParamsFromInput(input);
-			return StregsystemCommandStatement(parameters);
+			try
+			{
+				return Run(thisRef, GetParamsFromInput(input));
+			}
+			catch
+			{
+				throw new Exception("Input did not match command");
+			}
 		}
 
-		public bool Run(object[] parameters)
+		public IStregsystemCommandResult Run(object thisRef, object[] parameters)
 		{
-			return StregsystemCommandStatement(parameters);
+			return (IStregsystemCommandResult)MethodInfo.Invoke(thisRef, parameters);
 		}
 
 		public object[] GetParamsFromInput(string input)
-		{ 
-			string[] _parameters = SplitInputString(input);
-			int _offset = 0;
-			string _cmdName = _parameters[0];
-			object[] _parsedParameters;
-			if (_cmdName == Format)
+		{
+			try
 			{
-				_parsedParameters = new object[_parameters.Length - 1];
-				_offset = 1;
+				string[] _split = SplitString(input);
+				int _defaultCount = ParameterInfos.Count(info => info.HasDefaultValue);
+				if (_split.Length + _defaultCount < ParameterInfos.Length)
+				{
+					throw new ArgumentException("Split length is too small", nameof(input));
+				}
+
+				object[] _parameters = new object[ParameterInfos.Length];
+
+				for (int i = 0; i < ParameterInfos.Length; i++)
+				{
+					/* parse splits until no more.
+					 * Defaults are always at the end (language rule) */
+					if (i < _split.Length && 
+						ParseParameter(_split[i], ParameterInfos[i].ParameterType, out object result))
+					{
+						_parameters[i] = result;
+					}
+					else if (i >= _split.Length &&
+						ParameterInfos[i].HasDefaultValue)
+					{
+						_parameters[i] = ParameterInfos[i].DefaultValue;
+					}
+					else
+					{
+						return default;
+					}
+				}
+
+				return _parameters;
 			}
-			else
+			catch
 			{
-				_parsedParameters = new object[_parameters.Length];
+				return default;
 			}
-
-
-			for (int i = 0; i < _parsedParameters.Length; i++)
-			{
-				/* C# Literals:
-				 * Integer Literals -> Not supported
-				 * Floating-point Literals -> double
-				 * Character Literals -> char
-				 * String Literals -> string
-				 * Boolean Literals -> bool */
-				string curr = _parameters[_offset + i];
-
-				if (double.TryParse(curr, out double doubleResult))
-				{
-					_parsedParameters[i] = doubleResult;
-				}
-				else if (char.TryParse(curr, out char charResult))
-				{
-					_parsedParameters[i] = charResult;
-				}
-				else if (curr.ToLower() == "true" || curr.ToLower() == "false")
-				{
-					/* We dont need try parse because we know for sure 
-					 * it will pass because of the conditional before */
-					_parsedParameters[i] = bool.Parse(curr);
-				}
-				else
-				{
-					_parsedParameters[i] = curr;
-				}
-			}
-
-			return _parsedParameters;
 		}
 
-		public bool Match(string input)
+		public bool Match(string name, string input)
 		{
-			string expected = SplitInputString(Format)[0];
-			string actual = SplitInputString(input)[0];
-			return expected == actual;
+			try
+			{
+				return name == m_name && GetParamsFromInput(input) != default;
+			}
+			catch
+			{
+				return false;
+			}
 		}
 
-		private string[] SplitInputString(string input)
+		private bool ParseParameter(string input, Type type, out object result)
 		{
-			return input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+			return (result = ParseParameter(input, type)) != null;
+		}
+
+		private object ParseParameter(string input, Type type)
+		{
+			return Convert.ChangeType(input, type);
+		}
+
+		private string[] SplitString(string input)
+		{
+			const string separator = " ";
+			return input.Split(separator, StringSplitOptions.RemoveEmptyEntries);
 		}
 	}
 }

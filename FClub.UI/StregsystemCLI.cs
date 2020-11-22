@@ -22,8 +22,11 @@ namespace FClub.UI
 			Running = true;
 			while (Running)
 			{
-				string inputLine = Console.ReadLine();
-				CommandEntered?.Invoke(inputLine);
+				string _inputLine = Console.ReadLine();
+				string[] _split = _inputLine.Split(' ');
+				string _name = _split[0];
+				string _parameters = string.Join(' ', _split.Skip(1));
+				CommandEntered?.Invoke(_name, _parameters);
 			}
 		}
 
