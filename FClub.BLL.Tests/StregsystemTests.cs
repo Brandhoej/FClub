@@ -553,5 +553,33 @@ namespace FClub.BLL.Tests
 			// Assert
 			Assert.ThrowsException<ArgumentNullException>(Test);
 		}
+
+		[TestMethod]
+		public void BuyProduct_ThrowsInsufficientCreditsException_IfUserDoesNotHaveBalanceForProduct()
+		{
+			// Arrange
+			User _user;
+			Product _product;
+			IFClubContext _fClubContext;
+			IUnitOfWork _unitOfWork;
+			IStregsystem _stregsystem;
+			bool _invoked = false;
+
+			// Act
+			_fClubContext = new HashsetFClubContext();
+			_unitOfWork = new HashsetUnitOfWork(_fClubContext);
+			_stregsystem = new Stregsystem(_unitOfWork);
+			_user = new User(1, "Andreas", "Brandhoej", "Hyw", "akbr18@student.aau.dk", 10);
+			_product = new Product(1, "product", 20, true, false);
+			_stregsystem.UserBalanceWarning += (user, product) => _invoked = true;
+			void Test()
+			{
+				_stregsystem.BuyProduct(_user, _product);
+			}
+
+			// Assert
+			Assert.ThrowsException<InsufficientCreditsException>(Test);
+			Assert.AreEqual(true, _invoked);
+		}
 	}
 }

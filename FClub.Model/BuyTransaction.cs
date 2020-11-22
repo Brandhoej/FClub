@@ -39,7 +39,8 @@ namespace FClub.Model
 
 		public override void Execute()
 		{
-			if (User.Balance + Amount <= 0)
+			if (!Product.CanBeBoughtOnCredit && 
+				User.Balance + Amount < 0)
 			{
 				throw new InsufficientCreditsException(User, Product);
 			}

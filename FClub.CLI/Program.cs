@@ -18,7 +18,7 @@ namespace FClub.CLI
 				Path.Combine(Environment.CurrentDirectory, "data", "users.csv"));
 			IUnitOfWork _unitOfWork = new HashsetUnitOfWork(_context);
 			IStregsystem _stregsystem = new Stregsystem(_unitOfWork);
-			IStregsystemUI _stregsystemUI = new StregsystemCLI(_stregsystem);
+			IStregsystemUI _stregsystemUI = new StregsystemCLI();
 			IStregsystemController _stregsystemController = new StregsystemController(_stregsystemUI, _stregsystem);
 
 			_stregsystemUI.Start();

@@ -17,7 +17,7 @@ namespace FClub.DAL
 		{
 			if (Collection.Contains(value))
 			{
-				throw new ArgumentException(nameof(value), "The entity value is already in the collection");
+				throw new ArgumentException("The entity value is already in the collection", nameof(value));
 			}
 
 			Collection.Add(value);

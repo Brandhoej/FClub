@@ -55,7 +55,7 @@ namespace FClub.Model
             {
                 if (string.IsNullOrEmpty(value))
                 {
-                    throw new ArgumentException(nameof(value), "Argument cannot be null or emtpy");
+                    throw new ArgumentException("Argument cannot be null or emtpy", nameof(value));
                 }
 
                 m_firstName = value;
@@ -69,7 +69,7 @@ namespace FClub.Model
             {
                 if (string.IsNullOrEmpty(value))
                 {
-                    throw new ArgumentException(nameof(value), "Argument cannot be null or emtpy");
+                    throw new ArgumentException("Argument cannot be null or emtpy", nameof(value));
                 }
 
                 m_lastName = value;
@@ -84,7 +84,7 @@ namespace FClub.Model
                 // TODO: Check specification
                 if (string.IsNullOrEmpty(value))
                 {
-                    throw new ArgumentException(nameof(value), "Argument cannot be null or emtpy");
+                    throw new ArgumentException("Argument cannot be null or emtpy", nameof(value));
                 }
 
                 m_username = value;
@@ -98,14 +98,14 @@ namespace FClub.Model
             {
                 if (string.IsNullOrEmpty(value))
                 {
-                    throw new ArgumentException(nameof(value), "Argument cannot be null or emtpy");
+                    throw new ArgumentException("Argument cannot be null or emtpy", nameof(value));
                 }
 
                 Regex _emailPattern = new Regex(@"(^[\w-,]+)@(([\w]+\.)+[\w]+(?=[\s]|$))", RegexOptions.Compiled);
 
                 if (!_emailPattern.IsMatch(value))
                 {
-                    throw new ArgumentException(nameof(value), $"Email does not follow correct format '{value}''");
+                    throw new ArgumentException($"Email does not follow correct format '{value}''", nameof(value));
                 }
 
                 m_email = value;

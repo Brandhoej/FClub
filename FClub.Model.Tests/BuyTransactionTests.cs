@@ -131,7 +131,7 @@ namespace FClub.Model.Tests
 
 			// Act
 			_user = new User(m_identifier, "FirstName", "LastName", "Username", "akbr18@student.aau.dk", _userInitBalance);
-			_product = new Product(1, "Name", _productPrice, true, true);
+			_product = new Product(1, "Name", _productPrice, true, false);
 			_buyTransaction = new BuyTransaction(m_identifier, _user, _product, _datetime);
 
 			void Test()
@@ -162,6 +162,52 @@ namespace FClub.Model.Tests
 
 			// Assert
 			Assert.AreEqual(_userInitBalance - _productPrice, _user.Balance);
+		}
+
+		[TestMethod]
+		public void BuyTransaction_ConstructsSuccessfully_IfEverythingIsSetCorrectly()
+		{
+			// Arrange
+			const int _id = 1;
+			const decimal _productPrice = 10;
+			const decimal _userInitBalance = 100;
+			User _user;
+			Product _product;
+			DateTime _datetime = DateTime.Now;
+			BuyTransaction _buyTransaction;
+
+			// Act
+			_user = new User(m_identifier, "FirstName", "LastName", "Username", "akbr18@student.aau.dk", _userInitBalance);
+			_product = new Product(1, "Name", _productPrice, true, true);
+			_buyTransaction = new BuyTransaction(_id, _user, _product, _datetime);
+
+			// Assert
+			Assert.AreEqual(_id, _buyTransaction.Id);
+			Assert.AreEqual(_user, _buyTransaction.User);
+			Assert.AreEqual(_product, _buyTransaction.Product);
+			Assert.AreEqual(_datetime, _buyTransaction.Date);
+		}
+
+		[TestMethod]
+		public void BuyTransaction_ThrowsArgumentNullException_IfProductIsNull()
+		{
+			// Arrange
+			const int _id = 1;
+			const decimal _userInitBalance = 100;
+			User _user;
+			Product _product = null;
+			DateTime _datetime = DateTime.Now;
+			BuyTransaction _buyTransaction;
+
+			// Act
+			void Test()
+			{
+				_user = new User(m_identifier, "FirstName", "LastName", "Username", "akbr18@student.aau.dk", _userInitBalance);
+				_buyTransaction = new BuyTransaction(_id, _user, _product, _datetime);
+			}
+
+			// Assert
+			Assert.ThrowsException<ArgumentNullException>(Test);
 		}
 	}
 }

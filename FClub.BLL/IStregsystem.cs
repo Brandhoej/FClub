@@ -9,7 +9,7 @@ namespace FClub.BLL
 		IEnumerable<Product> ActiveProducts { get; }
 
 		InsertCashTransaction AddCreditsToAccount(User user, decimal amount);
-		BuyTransaction BuyProduct(User user, Product product);
+		BuyTransaction BuyProduct(User user, Product product, int amount = 1);
 		Product GetProductById(int id);
 		IEnumerable<Transaction> GetTransactions(User user, int count);
 		IEnumerable<User> GetUsers(Predicate<User> predicate);

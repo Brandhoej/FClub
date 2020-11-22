@@ -50,5 +50,22 @@ namespace FClub.Model.Tests
 			// Assert
 			Assert.ThrowsException<ArgumentException>(Test);
 		}
+
+		[TestMethod]
+		public void InsertCashTransaction_ThrowsArgumentNullException_IfUserIsNull()
+		{
+			// Arrange
+			const decimal _amount = -1M;
+			InsertCashTransaction _insertCashTransaction;
+
+			// Act
+			void Test()
+			{
+				_insertCashTransaction = new InsertCashTransaction(m_identifier, null, _amount);
+			}
+
+			// Assert
+			Assert.ThrowsException<ArgumentNullException>(Test);
+		}
 	}
 }

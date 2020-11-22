@@ -141,30 +141,6 @@ namespace FClub.DAL.Tests
 		}
 
 		[TestMethod]
-		public void Delete_ThrowsInvalidOperationException_IfEntityNotFound()
-		{
-			// Arrange
-			object _toDelete = 4;
-			ICollection<int> _collection = new List<int>()
-			{
-				1,
-				2,
-				3
-			};
-			CollectionRepository<int> _repository;
-
-			// Act
-			_repository = new CollectionRepository<int>(_collection);
-			void Test()
-			{
-				_repository.Delete(_toDelete);
-			}
-
-			// Assert
-			Assert.ThrowsException<InvalidOperationException>(Test);
-		}
-
-		[TestMethod]
 		public void Find_ThrowsArgumentNullException_IfPredicateIsNull()
 		{
 			// Arrange

@@ -1,5 +1,6 @@
 ﻿using FClub.Core;
 using System;
+using System.Diagnostics;
 
 namespace FClub.Model
 {

@@ -19,8 +19,8 @@ namespace FClub.DAL.IO
 	{
 		public UsersReader(string separator, string path)
 		{
-			Path = path;
-			Separator = separator;
+			Path = path ?? throw new ArgumentNullException(nameof(path), "Path cannot be null");
+			Separator = separator ?? throw new ArgumentNullException(nameof(separator), "Seperator cannot be null");
 		}
 
 		public string Separator { get; }
@@ -43,6 +43,11 @@ namespace FClub.DAL.IO
 		public User CreateUserFromLine(string line)
 		{
 			string[] _split = line.Split(Separator, StringSplitOptions.RemoveEmptyEntries);
+			if (_split.Length != 6)
+			{
+				throw new ArgumentException("Must have 5 separations", nameof(line));
+			}
+
 			int _id = int.Parse(_split[0]);
 			string _firstName = _split[1];
 			string _lastName = _split[2];

@@ -10,7 +10,7 @@ namespace FClub.Model
 		{
 			if (seasonStartDate >= seasonEndDate)
 			{
-				throw new ArgumentException($"{nameof(seasonStartDate)} {nameof(SeasonEndDate)}", "Season start cannot be after or on season end");
+				throw new ArgumentException("Season start cannot be after or on season end", $"{nameof(seasonStartDate)} {nameof(SeasonEndDate)}");
 			}
 
 			SeasonStartDate = seasonStartDate;

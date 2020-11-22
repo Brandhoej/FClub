@@ -12,7 +12,7 @@ namespace FClub.Model
 		{
 			if (amount < 0)
 			{
-				throw new ArgumentException(nameof(amount), "Cannot insert negative amount");
+				throw new ArgumentException("Cannot insert negative amount", nameof(amount));
 			}
 		}
 	}

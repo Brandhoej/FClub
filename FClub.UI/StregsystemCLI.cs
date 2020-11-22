@@ -10,12 +10,6 @@ namespace FClub.UI
 	{
 		public event stregsystemEvent CommandEntered;
 
-		public StregsystemCLI(IStregsystem stregsystem)
-		{
-			Stregsystem = stregsystem ?? throw new ArgumentNullException(nameof(stregsystem), "Stregsystem required for the CLI");
-		}
-
-		private IStregsystem Stregsystem { get; }
 		public bool Running { get; private set; }
 		
 		public void Start()
@@ -64,68 +58,76 @@ namespace FClub.UI
 		{
 			Console.Clear();
 
-			Console.WriteLine($"{transaction.User.Username} has bought {transaction.Product.Name} at a price of {transaction.Product.Price}");
+			Console.WriteLine($"'{transaction.User.Username}' has bought '{transaction.Product.Name}' at a price of '{transaction.Product.Price}'");
 		}
 
 		public void DisplayUserBuysProduct(int count, BuyTransaction transaction)
 		{
 			Console.Clear();
 
-			Console.WriteLine($"{transaction.User.Username} has bought {transaction.Product.Name} at a price of {transaction.Product.Price} {count} time(s)");
+			Console.WriteLine($"'{transaction.User.Username}' has bought '{transaction.Product.Name}' at a price of '{transaction.Product.Price} {count}' time(s)");
 		}
 
 		public void DisplayUserInfo(User user)
 		{
 			Console.Clear();
 
-			Console.WriteLine($"User: {user}");
+			Console.WriteLine($"User: '{user}'");
+			Console.WriteLine($"Balance: '{user.Balance}'");
 		}
 
 		public void DisplayInsufficientCash(User user, Product product)
 		{
 			Console.Clear();
 
-			Console.WriteLine($"{user} has insufficient funds for {product.Name} price: {product.Price}");
+			Console.WriteLine($"'{user}' has insufficient funds for '{product.Name}' price: '{product.Price}'");
 		}
 
 		public void DisplayProductNotFound(string product)
 		{
 			Console.Clear();
 
-			Console.WriteLine($"Product {product} not found");
+			Console.WriteLine($"Product '{product}' not found");
 		}
 
 		public void DisplayTooManyArgumentsError(string command)
 		{
 			Console.Clear();
 
-			Console.WriteLine($"Too many arguments in {command}");
+			Console.WriteLine($"Too many arguments in '{command}'");
 		}
 
 		public void DisplayAdminCommandNotFoundMessage(string adminCommand)
 		{
 			Console.Clear();
 
-			Console.WriteLine($"Command not found {adminCommand}");
+			Console.WriteLine($"Command not found '{adminCommand}'");
 		}
 
 		public void DisplayGeneralError(string errorString)
 		{
 			Console.Clear();
 
-			Console.WriteLine($"Error: {errorString}");
+			Console.WriteLine($"Error: '{errorString}'");
 		}
 
 		public void DisplayUserNotFound(string username)
 		{
 			Console.Clear();
 
-			Console.WriteLine($"User {username} not found");
+			Console.WriteLine($"User '{username}' not found");
 		}
 
 		public void Stop()
 		{
 			Running = false;
+		}
+
+		public void DisplayProduct(Product product)
+		{
+			Console.Clear();
+
+			Console.WriteLine($"Product: '{product.Name}', Active: '{product.Active}', Price: '{product.Price}' CanBeBoughtOnCredit: '{product.CanBeBoughtOnCredit}'");
 		}
 	}
 }

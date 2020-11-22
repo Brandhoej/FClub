@@ -12,6 +12,7 @@ namespace FClub.UI
 
 		void Start();
 
+		void DisplayProduct(Product product);
 		void DisplayProducts(IEnumerable<Product> products);
 		void DisplayUserInfo(User user);
 		void DisplayUserBuysProduct(BuyTransaction transaction);

@@ -40,35 +40,5 @@ namespace FClub.DAL.Tests
 			// Assert
 			Assert.ThrowsException<ArgumentNullException>(Test);
 		}
-
-		[TestMethod]
-		public void _3_()
-		{
-			// Arrange
-
-			// Act
-
-			// Assert
-		}
-
-		[TestMethod]
-		public void _4_()
-		{
-			// Arrange
-
-			// Act
-
-			// Assert
-		}
-
-		[TestMethod]
-		public void _5_()
-		{
-			// Arrange
-
-			// Act
-
-			// Assert
-		}
 	}
 }

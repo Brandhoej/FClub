@@ -4,12 +4,16 @@ using FClub.Model;
 using FClub.DAL;
 using FClub.Core;
 using System.Linq;
+using FClub.BLL.IO.Logging;
+using System.IO;
 
 namespace FClub.BLL
 {
 	public class Stregsystem : IStregsystem
 	{
 		public event User.balanceNotification UserBalanceWarning;
+
+		private readonly ILogger<Transaction> m_transactionLogger;
 
 		public Stregsystem(IUnitOfWork unitOfWork)
 			: this(unitOfWork.Products, unitOfWork.Users, unitOfWork.Transactions)
@@ -25,6 +29,7 @@ namespace FClub.BLL
 			Users = users ?? throw new ArgumentNullException(nameof(Users), "User repository cannot be null");
 			Transactions = transactions ?? throw new ArgumentNullException(nameof(Transactions), "Transaction repository cannot be null");
 			TransactionIdentifier = transactionIdentifier ?? throw new ArgumentNullException(nameof(transactionIdentifier), "Transaction identifier cannot be null");
+			m_transactionLogger = new TransactionLogger(Path.Combine(Environment.CurrentDirectory, "Log"), "transaction_log.txt");
 		}
 
 		private IRepository<Product> Products { get; }
@@ -36,6 +41,11 @@ namespace FClub.BLL
 
 		public InsertCashTransaction AddCreditsToAccount(User user, decimal amount)
 		{
+			if (amount < 1)
+			{
+				throw new ArgumentException($"{amount} is not valid as an amount to buy", nameof(amount));
+			}
+
 			if (user == null)
 			{
 				throw new ArgumentNullException(nameof(user), "User cannot be null");
@@ -53,7 +63,7 @@ namespace FClub.BLL
 			}
 		}
 
-		public BuyTransaction BuyProduct(User user, Product product)
+		public BuyTransaction BuyProduct(User user, Product product, int amount = 1)
 		{
 			if (user == null)
 			{
@@ -65,9 +75,26 @@ namespace FClub.BLL
 				throw new ArgumentNullException(nameof(product), "Product cannot be null");
 			}
 
-			BuyTransaction _buyTransaction = new BuyTransaction(TransactionIdentifier, user, product);
-			ExecuteTransaction(_buyTransaction);
-			return _buyTransaction;
+			if (!product.CanBeBoughtOnCredit &&
+				product.Price * amount > user.Balance)
+			{
+				throw new InsufficientCreditsException(user, product);
+			}
+
+			try
+			{
+				BuyTransaction _buyTransaction = default;
+				for (int i = 0; i < amount; i++)
+				{
+					_buyTransaction = new BuyTransaction(TransactionIdentifier, user, product);
+					ExecuteTransaction(_buyTransaction);
+				}
+				return _buyTransaction;
+			}
+			catch
+			{
+				throw;
+			}
 		}
 
 		public Product GetProductById(int id)
@@ -113,12 +140,8 @@ namespace FClub.BLL
 			try
 			{
 				transaction.Execute();
-				// TODO: Log transaction
+				m_transactionLogger.Log(transaction);
 				Transactions.Insert(transaction);
-			}
-			catch(InsufficientCreditsException insufficientCreditsException)
-			{
-				UserBalanceWarning?.Invoke(insufficientCreditsException.User, insufficientCreditsException.Product.Price);
 			}
 			catch
 			{

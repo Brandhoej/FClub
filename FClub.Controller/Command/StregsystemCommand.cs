@@ -13,15 +13,21 @@ namespace FClub.Controller.Command
 		StregsystemCommandStatement StregsystemCommandStatement { get; }
 
 		bool Run(string input);
+		bool Run(object[] parameters);
 		bool Match(string input);
+		object[] GetParamsFromInput(string input);
 	}
 
 	internal class StregsystemCommand : IStregsystemCommand
 	{
+		public StregsystemCommand(StregsystemCommandStatement stregsystemCommand)
+			: this(string.Empty, stregsystemCommand)
+		{ }
+
 		public StregsystemCommand(string format, StregsystemCommandStatement stregsystemCommand)
 		{
 			Format = format;
-			StregsystemCommandStatement = stregsystemCommand;
+			StregsystemCommandStatement = stregsystemCommand ?? throw new ArgumentNullException(nameof(stregsystemCommand));
 		}
 
 		public string Format { get; }
@@ -33,12 +39,29 @@ namespace FClub.Controller.Command
 			return StregsystemCommandStatement(parameters);
 		}
 
-		private object[] GetParamsFromInput(string input)
+		public bool Run(object[] parameters)
 		{
-			string[] parameters = SplitInputString(input);
-			object[] parsedParameters = new object[parameters.Length - 1];
+			return StregsystemCommandStatement(parameters);
+		}
 
-			for (int i = 1; i < parameters.Length; i++)
+		public object[] GetParamsFromInput(string input)
+		{ 
+			string[] _parameters = SplitInputString(input);
+			int _offset = 0;
+			string _cmdName = _parameters[0];
+			object[] _parsedParameters;
+			if (_cmdName == Format)
+			{
+				_parsedParameters = new object[_parameters.Length - 1];
+				_offset = 1;
+			}
+			else
+			{
+				_parsedParameters = new object[_parameters.Length];
+			}
+
+
+			for (int i = 0; i < _parsedParameters.Length; i++)
 			{
 				/* C# Literals:
 				 * Integer Literals -> Not supported
@@ -46,29 +69,29 @@ namespace FClub.Controller.Command
 				 * Character Literals -> char
 				 * String Literals -> string
 				 * Boolean Literals -> bool */
-				string curr = parameters[i];
+				string curr = _parameters[_offset + i];
 
 				if (double.TryParse(curr, out double doubleResult))
 				{
-					parsedParameters[i - 1] = doubleResult;
+					_parsedParameters[i] = doubleResult;
 				}
 				else if (char.TryParse(curr, out char charResult))
 				{
-					parsedParameters[i - 1] = charResult;
+					_parsedParameters[i] = charResult;
 				}
 				else if (curr.ToLower() == "true" || curr.ToLower() == "false")
 				{
 					/* We dont need try parse because we know for sure 
 					 * it will pass because of the conditional before */
-					parsedParameters[i - 1] = bool.Parse(curr);
+					_parsedParameters[i] = bool.Parse(curr);
 				}
 				else
 				{
-					parsedParameters[i - 1] = curr;
+					_parsedParameters[i] = curr;
 				}
 			}
 
-			return parsedParameters;
+			return _parsedParameters;
 		}
 
 		public bool Match(string input)

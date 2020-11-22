@@ -24,25 +24,25 @@ namespace FClub.Controller
 		{
 			m_stregsystemUI = stregsystemUI;
 			m_stregsystem = stregsystem;
-			m_parser = new StregsystemCommandParser()
+			m_parser = new StregsystemCommandParser(Default)
 			{
 				/* Formatting:
 				 * ':' is a command with NO view change expected 
 				 * '/' is a command with view change expected */
 
 				// Admin
-				new StregsystemCommand(":q", parameters			 => Stop(parameters)),
-				new StregsystemCommand(":quit", parameters		 => Stop(parameters)),
-				new StregsystemCommand(":activate", parameters   => ActiveProduct(parameters)),
-				new StregsystemCommand(":deactivate", parameters => DeactivateProduct(parameters)),
-				new StregsystemCommand(":crediton", parameters	 => ActivateProductCredit(parameters)),
-				new StregsystemCommand(":creditoff", parameters  => DeactivateProductCredit(parameters)),
-				new StregsystemCommand(":addcredits", parameters => AddCreditsToUser(parameters)),
+				new StregsystemCommand(":q", Stop),
+				new StregsystemCommand(":quit", Stop),
+				new StregsystemCommand(":activate", ActiveProduct),
+				new StregsystemCommand(":deactivate", DeactivateProduct),
+				new StregsystemCommand(":crediton", ActivateProductCredit),
+				new StregsystemCommand(":creditoff", DeactivateProductCredit),
+				new StregsystemCommand(":addcredits", AddCreditsToUser),
 
 				// User
-				new StregsystemCommand("/user", parameters => User(parameters)),
-				new StregsystemCommand("/buy", parameters  => Buy(parameters)),
-				new StregsystemCommand("/home", parameters => Home(parameters)),
+				new StregsystemCommand("/user", User),
+				new StregsystemCommand("/home", Home),
+				new StregsystemCommand("/product", Product),
 			};
 
 			m_stregsystemUI.CommandEntered += StregsystemUI_CommandEntered;
@@ -53,6 +53,24 @@ namespace FClub.Controller
 		{
 			StregsystemCommand _cmd = m_parser.Parse(input);
 			return _cmd.Run(input);
+		}
+
+		private bool Default(params object[] parameters)
+		{
+			return Buy(parameters);
+		}
+
+		private bool Product(params object[] parameters)
+		{
+			if (parameters.Length != 1 ||
+				parameters[0] is double == false)
+			{
+				m_stregsystemUI.DisplayTooManyArgumentsError("Product requires one parameter");
+				return false;
+			}
+
+			m_stregsystemUI.DisplayProduct(m_stregsystem.GetProductById(int.Parse(parameters[0].ToString())));
+			return true;
 		}
 
 		private bool Home(params object[] parameters)
@@ -75,7 +93,6 @@ namespace FClub.Controller
 				if (_buyTransaction != null)
 				{
 					m_stregsystemUI.DisplayUserBuysProduct(_buyTransaction);
-					return true;
 				}
 			}
 			else if (parameters.Length == 3)
@@ -84,10 +101,9 @@ namespace FClub.Controller
 				if (_buyTransaction != null)
 				{
 					m_stregsystemUI.DisplayUserBuysProduct(_buyTransaction);
-					return true;
 				}
 			}
-			return false;
+			return true;
 		}
 
 		private BuyTransaction SingleBuy(params object[] parameters)
@@ -157,7 +173,7 @@ namespace FClub.Controller
 				return default;
 			}
 
-			Product _product = m_stregsystem.GetProductById((int)parameters[2]);
+			Product _product = m_stregsystem.GetProductById(int.Parse(parameters[2].ToString()));
 			if (_product == null)
 			{
 				m_stregsystemUI.DisplayProductNotFound(parameters[2].ToString());
@@ -166,13 +182,8 @@ namespace FClub.Controller
 
 			try
 			{
-				int _amount = (int)parameters[1];
-				BuyTransaction _buyTransaction = default;
-				for (int i = 0; i < _amount; i++)
-				{
-					_buyTransaction = m_stregsystem.BuyProduct(_user, _product);
-				}
-				return _buyTransaction;
+				int _amount = int.Parse(parameters[1].ToString());
+				return m_stregsystem.BuyProduct(_user, _product, _amount);
 			}
 			catch (InsufficientCreditsException)
 			{
@@ -223,7 +234,7 @@ namespace FClub.Controller
 
 			try
 			{
-				m_stregsystem.AddCreditsToAccount(_user, (decimal)parameters[1]);
+				m_stregsystem.AddCreditsToAccount(_user, decimal.Parse(parameters[1].ToString()));
 			}
 			catch
 			{
@@ -240,7 +251,7 @@ namespace FClub.Controller
 				return false;
 			}
 
-			Product _product = m_stregsystem.GetProductById((int)parameters[0]);
+			Product _product = m_stregsystem.GetProductById(int.Parse(parameters[0].ToString()));
 			if (_product == null)
 			{
 				return false;
@@ -265,7 +276,7 @@ namespace FClub.Controller
 				return false;
 			}
 
-			Product _product = m_stregsystem.GetProductById((int)parameters[0]);
+			Product _product = m_stregsystem.GetProductById(int.Parse(parameters[0].ToString()));
 			if (_product == null)
 			{
 				return false;
@@ -290,7 +301,7 @@ namespace FClub.Controller
 				return false;
 			}
 
-			Product _product = m_stregsystem.GetProductById((int)parameters[0]);
+			Product _product = m_stregsystem.GetProductById(int.Parse(parameters[0].ToString()));
 			if (_product == null)
 			{
 				return false;
@@ -298,7 +309,7 @@ namespace FClub.Controller
 
 			try
 			{
-				_product.Active = false;
+				_product.Active = true;
 			}
 			catch
 			{
@@ -315,7 +326,7 @@ namespace FClub.Controller
 				return false;
 			}
 
-			Product _product = m_stregsystem.GetProductById((int)parameters[0]);
+			Product _product = m_stregsystem.GetProductById(int.Parse(parameters[0].ToString()));
 			if (_product == null)
 			{
 				return false;
