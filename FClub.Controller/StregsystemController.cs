@@ -3,35 +3,15 @@ using FClub.Model;
 using FClub.UI;
 using FClub.Controller.Command;
 using FClub.Controller.Command.Parser;
-using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Reflection;
 using System.Linq;
+using System;
+using System.Diagnostics;
 
 namespace FClub.Controller
 {
-	public interface IStregsystemController
-	{
-		IStregsystemCommandResult Execute(string name, string input = "");
-	}
-
-	public class Hejsa : IStregsystemCommandResult
-	{
-
-	}
-
-	[AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
-	public class RouteAttribute : Attribute
-	{
-		public string Path { get; }
-
-		public RouteAttribute(string path)
-		{
-			Path = path;
-		}
-	}
-
 	public class StregsystemController : IStregsystemController
 	{
 		private readonly IStregsystemCommandParser m_parser;
@@ -83,8 +63,16 @@ namespace FClub.Controller
 		public IStregsystemCommandResult Users(string username)
 		{
 			User _user = m_stregsystem.GetUserByUsername(username);
-			m_stregsystemUI.DisplayUserInfo(_user);
-			return new Hejsa();
+			m_stregsystemUI.DisplayUserBuyInterface(_user, m_stregsystem.ActiveProducts);
+			return new Ok();
+		}
+
+		[Route("/users/info")]
+		public IStregsystemCommandResult UsersInfo(string username)
+		{
+			User _user = m_stregsystem.GetUserByUsername(username);
+			m_stregsystemUI.DisplayUserInformation(_user, m_stregsystem.GetTransactions(_user, 10));
+			return new Ok();
 		}
 
 		[Route("/buy")]
@@ -92,15 +80,34 @@ namespace FClub.Controller
 		{
 			User _user = m_stregsystem.GetUserByUsername(username);
 			Product _product = m_stregsystem.GetProductById(productId);
-			m_stregsystem.BuyProduct(_user, _product, amount);
-			return new Hejsa();
+			try
+			{
+				BuyTransaction _buyTransaction = m_stregsystem.BuyProduct(_user, _product, amount);
+				if (amount == 1)
+				{
+					m_stregsystemUI.DisplayUserBuysProduct(_buyTransaction);
+				}
+				else
+				{
+					m_stregsystemUI.DisplayUserBuysProduct(amount, _buyTransaction);
+				}
+			}
+			catch (InsufficientCreditsException _insufficientCreditsException)
+			{
+				m_stregsystemUI.DisplayInsufficientCash(_insufficientCreditsException.User, _insufficientCreditsException.Product);
+			}
+			catch (Exception exception)
+			{
+				m_stregsystemUI.DisplayGeneralError(exception.Message);
+			}
+			return new Ok();
 		}
 
 		[Route("/products")]
 		public IStregsystemCommandResult Products()
 		{
 			m_stregsystemUI.DisplayProducts(m_stregsystem.ActiveProducts);
-			return new Hejsa();
+			return new Ok();
 		}
 
 		[Route(":addcredits")]
@@ -108,7 +115,7 @@ namespace FClub.Controller
 		{
 			User _user = m_stregsystem.GetUserByUsername(username);
 			m_stregsystem.AddCreditsToAccount(_user, amount);
-			return new Hejsa();
+			return new Ok();
 		}
 
 		[Route(":crediton")]
@@ -116,7 +123,7 @@ namespace FClub.Controller
 		{
 			Product _product = m_stregsystem.GetProductById(productId);
 			_product.CanBeBoughtOnCredit = true;
-			return new Hejsa();
+			return new Ok();
 		}
 
 		[Route(":creditoff")]
@@ -124,7 +131,7 @@ namespace FClub.Controller
 		{
 			Product _product = m_stregsystem.GetProductById(productId);
 			_product.CanBeBoughtOnCredit = false;
-			return new Hejsa();
+			return new Ok();
 		}
 
 		[Route(":activate")]
@@ -132,7 +139,7 @@ namespace FClub.Controller
 		{
 			Product _product = m_stregsystem.GetProductById(productId);
 			_product.Active = true;
-			return new Hejsa();
+			return new Ok();
 		}
 
 		[Route(":deactivate")]
@@ -140,7 +147,7 @@ namespace FClub.Controller
 		{
 			Product _product = m_stregsystem.GetProductById(productId);
 			_product.Active = false;
-			return new Hejsa();
+			return new Ok();
 		}
 
 		[Route(":q")]
@@ -148,12 +155,12 @@ namespace FClub.Controller
 		public IStregsystemCommandResult Stop()
 		{
 			m_stregsystemUI.Stop();
-			return new Hejsa();
+			return new Ok();
 		}
 
 		private string StregsystemUI_CommandEntered(string name, string parameters)
 		{
-			return Execute(name, parameters)?.ToString() ?? "Error";
+			return (Execute(name, parameters) ?? new Error()).ToString();
 		}
 	}
 }

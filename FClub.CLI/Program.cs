@@ -1,11 +1,9 @@
-﻿using FClub.Model;
-using FClub.DAL;
-using FClub.BLL;
-using FClub.UI;
+﻿using FClub.BLL;
 using FClub.Controller;
+using FClub.DAL;
+using FClub.UI;
 using System;
 using System.IO;
-using System.Reflection;
 
 namespace FClub.CLI
 {

@@ -3,14 +3,22 @@ using FClub.BLL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace FClub.UI
 {
 	public class StregsystemCLI : IStregsystemUI
 	{
 		public event stregsystemEvent CommandEntered;
+		private readonly ISceneManager m_sceneManager;
+
+		public StregsystemCLI()
+		{
+			m_sceneManager = new SceneManager<ConsoleScene>();
+		}
 
 		public bool Running { get; private set; }
+
 		
 		public void Start()
 		{
@@ -22,115 +30,211 @@ namespace FClub.UI
 			Running = true;
 			while (Running)
 			{
-				string _inputLine = Console.ReadLine();
-				string[] _split = _inputLine.Split(' ');
-				string _name = _split[0];
-				string _parameters = string.Join(' ', _split.Skip(1));
-				CommandEntered?.Invoke(_name, _parameters);
+				ConsoleKeyInfo _keyInfo = Console.ReadKey(true);
+
+				if (_keyInfo.KeyChar == ':')
+				{
+					DisplayAdmin();
+				}
+
+				MenuComponentEvent _event = new MenuComponentEvent(_keyInfo);
+				m_sceneManager.CurrentScene?.Event(_event);
 			}
+		}
+
+		private void DisplayAdmin()
+		{
+			Label _adminInfo = new Label("You are now accessing admin controls");
+			InlineLabel _inlineLabel = new InlineLabel(":");
+			ExecutableTextbox _textbox = new ExecutableTextbox(command => CommandEntered?.Invoke(':' + command.Split(' ')[0], string.Join(' ', command.Split(' ')[1..^0])));
+			Spacer spacer = new Spacer();
+			Button _button = new Button("Back", () => CommandEntered?.Invoke("/products", string.Empty));
+			IScene _scene = new ConsoleScene(_adminInfo, _inlineLabel, _textbox, spacer, _button);
+			_textbox.Down = _button;
+			_button.Up = _textbox;
+			m_sceneManager.Swap(_scene);
+			m_sceneManager.Render();
+			_scene.SetFocus(_textbox);
 		}
 
 		public void DisplayProducts(IEnumerable<Product> products)
 		{
-			Console.Clear();
-
-			int[] columnWidths = new int[3]
+			IMenuComponent _productMenu = new ProductMenu(products);
+			IMenuComponent _quickbuy = new InlineLabel("Quickbuy> ");
+			IMenuComponent _textbox = new ExecutableTextbox(command =>
 			{
-				2, 4, 5
+				if (command.Split(' ').Length == 1)
+				{
+					CommandEntered?.Invoke("/users", command);
+				}
+				else
+				{
+					CommandEntered?.Invoke("/buy", command);
+				}
+			})
+			{
+				Focus = true
 			};
-
-			foreach (Product product in products)
-			{
-				columnWidths[0] = Math.Max(product.Id.ToString().Length, columnWidths[0]);
-				columnWidths[1] = Math.Max(product.Name.ToString().Length, columnWidths[1]);
-				columnWidths[2] = Math.Max(product.Price.ToString().Length, columnWidths[2]);
-			}
-
-			string format = "{0,-" + columnWidths[0] + "}   {1,-" + columnWidths[1] + "}   {2,-" + columnWidths[2] + "}";
-			Console.WriteLine(string.Format(format, "Id", "Name", "Price"));
-			foreach (Product product in products)
-			{
-				Console.WriteLine(string.Format(format, product.Id, product.Name, product.Price));
-			}
-
-			Console.WriteLine(string.Empty);
-			Console.Write("Quickbuy> ");
+			IScene _scene = new ConsoleScene(_productMenu, _quickbuy, _textbox);
+			m_sceneManager.Swap(_scene);
+			m_sceneManager.Render();
 		}
 
 		public void DisplayUserBuysProduct(BuyTransaction transaction)
 		{
-			Console.Clear();
-
-			Console.WriteLine($"'{transaction.User.Username}' has bought '{transaction.Product.Name}' at a price of '{transaction.Product.Price}'");
+			Label _label = new Label($"'{transaction.User.Username}' has bought '{transaction.Product.Name}' at a price of '{transaction.Product.Price}'");
+			Button _button1 = new Button("Back", () => CommandEntered?.Invoke("/products", string.Empty))
+			{
+				Focus = true
+			};
+			Spacer spacer = new Spacer();
+			Button _button2 = new Button("Back", () => CommandEntered?.Invoke("/products", string.Empty));
+			_button1.Down = _button2;
+			_button2.Up = _button1;
+			IScene _scene = new ConsoleScene(_label, _button1, spacer, _button2);
+			m_sceneManager.Swap(_scene);
+			m_sceneManager.Render();
 		}
 
 		public void DisplayUserBuysProduct(int count, BuyTransaction transaction)
 		{
-			Console.Clear();
-
-			Console.WriteLine($"'{transaction.User.Username}' has bought '{transaction.Product.Name}' at a price of '{transaction.Product.Price} {count}' time(s)");
+			Label _label = new Label($"'{transaction.User.Username}' has bought '{transaction.Product.Name}' at a price of '{transaction.Product.Price} {count}' time(s)");
+			Button _button = new Button("Back", () => CommandEntered?.Invoke("/products", string.Empty))
+			{
+				Focus = true
+			};
+			IScene _scene = new ConsoleScene(_label, _button);
+			m_sceneManager.Swap(_scene);
+			m_sceneManager.Render();
 		}
 
-		public void DisplayUserInfo(User user)
+		public void DisplayUserBuyInterface(User user, IEnumerable<Product> products)
 		{
-			Console.Clear();
+			Label _labelUser = new Label($"User: '{user}'");
+			Label _labelbalance = new Label($"Balance: '{user.Balance}'");
+			ButtonProductMenu _buttonProductMenu = new ButtonProductMenu(products, product =>
+			{
+				CommandEntered?.Invoke("/buy", $"{user.Username} {product.Id}");
+				CommandEntered?.Invoke("/users", $"{user.Username}");
+			});
+			Button _button = new Button("Back", () => CommandEntered?.Invoke("/products", string.Empty));
+			Spacer _spacer = new Spacer();
+			Button _userInfo = new Button("User info", () => CommandEntered?.Invoke("/users/info", user.Username));
+			IScene _scene = new ConsoleScene(_labelUser, _labelbalance, _buttonProductMenu, _userInfo, _spacer, _button);
+			m_sceneManager.Swap(_scene);
+			m_sceneManager.Render();
+			_scene.SetFocus(_buttonProductMenu.buttons.First());
 
-			Console.WriteLine($"User: '{user}'");
-			Console.WriteLine($"Balance: '{user.Balance}'");
+			Button _lastButton = _buttonProductMenu.buttons.Last();
+			_lastButton.Down = _userInfo;
+			_userInfo.Up = _lastButton;
+			_userInfo.Down = _button;
+			_button.Up = _userInfo;
+		}
+
+		public void DisplayUserInformation(User user, IEnumerable<Transaction> transactions)
+		{
+			Label _labelUser = new Label($"User: '{user}'");
+			Label _labelbalance = new Label($"Balance: '{user.Balance}'");
+			BaseMenuComponent _transactionsContainter = new BaseMenuComponent();
+			foreach (Transaction transaction in transactions)
+			{
+				_transactionsContainter.AddChild(new Label(transaction.GetType().Name));
+			}
+			Button _button = new Button("Back", () => CommandEntered?.Invoke("/users", $"{user.Username}"));
+			IScene _scene = new ConsoleScene(_labelUser, _labelbalance, _transactionsContainter, _button);
+			m_sceneManager.Swap(_scene);
+			m_sceneManager.Render();
+			_scene.SetFocus(_button);
 		}
 
 		public void DisplayInsufficientCash(User user, Product product)
 		{
-			Console.Clear();
-
-			Console.WriteLine($"'{user}' has insufficient funds for '{product.Name}' price: '{product.Price}'");
+			Label _label = new Label($"'{user}' has insufficient funds for '{product.Name}' price: '{product.Price}'");
+			Button _button = new Button("Back", () => CommandEntered?.Invoke("/products", string.Empty))
+			{
+				Focus = true
+			};
+			IScene _scene = new ConsoleScene(_label, _button);
+			m_sceneManager.Swap(_scene);
+			m_sceneManager.Render();
 		}
 
 		public void DisplayProductNotFound(string product)
 		{
-			Console.Clear();
-
-			Console.WriteLine($"Product '{product}' not found");
+			Label _label = new Label($"Product '{product}' not found");
+			Button _button = new Button("Back", () => CommandEntered?.Invoke("/products", string.Empty))
+			{
+				Focus = true
+			};
+			IScene _scene = new ConsoleScene(_label, _button);
+			m_sceneManager.Swap(_scene);
+			m_sceneManager.Render();
 		}
 
 		public void DisplayTooManyArgumentsError(string command)
 		{
-			Console.Clear();
-
-			Console.WriteLine($"Too many arguments in '{command}'");
+			Label _label = new Label($"Too many arguments in '{command}'");
+			Button _button = new Button("Back", () => CommandEntered?.Invoke("/products", string.Empty))
+			{
+				Focus = true
+			};
+			IScene _scene = new ConsoleScene(_label, _button);
+			m_sceneManager.Swap(_scene);
+			m_sceneManager.Render();
 		}
 
 		public void DisplayAdminCommandNotFoundMessage(string adminCommand)
 		{
-			Console.Clear();
-
-			Console.WriteLine($"Command not found '{adminCommand}'");
+			Label _label = new Label($"Command not found '{adminCommand}'");
+			Button _button = new Button("Back", () => CommandEntered?.Invoke("/products", string.Empty))
+			{
+				Focus = true
+			};
+			IScene _scene = new ConsoleScene(_label, _button);
+			m_sceneManager.Swap(_scene);
+			m_sceneManager.Render();
 		}
 
 		public void DisplayGeneralError(string errorString)
 		{
-			Console.Clear();
-
-			Console.WriteLine($"Error: '{errorString}'");
+			Label _label = new Label($"Error: '{errorString}'");
+			Button _button = new Button("Back", () => CommandEntered?.Invoke("/products", string.Empty))
+			{
+				Focus = true
+			};
+			IScene _scene = new ConsoleScene(_label, _button);
+			m_sceneManager.Swap(_scene);
+			m_sceneManager.Render();
 		}
 
 		public void DisplayUserNotFound(string username)
 		{
-			Console.Clear();
+			Label _label = new Label($"User '{username}' not found");
+			Button _button = new Button("Back", () => CommandEntered?.Invoke("/products", string.Empty))
+			{
+				Focus = true
+			};
+			IScene _scene = new ConsoleScene(_label, _button);
+			m_sceneManager.Swap(_scene);
+			m_sceneManager.Render();
+		}
 
-			Console.WriteLine($"User '{username}' not found");
+		public void DisplayProduct(Product product)
+		{
+			Label _label = new Label($"Product: '{product.Name}', Active: '{product.Active}', Price: '{product.Price}' CanBeBoughtOnCredit: '{product.CanBeBoughtOnCredit}'");
+			Button _button = new Button("Back", () => CommandEntered?.Invoke("/products", string.Empty))
+			{
+				Focus = true
+			};
+			IScene _scene = new ConsoleScene(_label, _button);
+			m_sceneManager.Swap(_scene);
+			m_sceneManager.Render();
 		}
 
 		public void Stop()
 		{
 			Running = false;
-		}
-
-		public void DisplayProduct(Product product)
-		{
-			Console.Clear();
-
-			Console.WriteLine($"Product: '{product.Name}', Active: '{product.Active}', Price: '{product.Price}' CanBeBoughtOnCredit: '{product.CanBeBoughtOnCredit}'");
 		}
 	}
 }

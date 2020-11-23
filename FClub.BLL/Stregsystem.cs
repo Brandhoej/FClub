@@ -78,6 +78,11 @@ namespace FClub.BLL
 				throw new ArgumentNullException(nameof(product), "Product cannot be null");
 			}
 
+			if (!product.Active)
+			{
+				throw new ArgumentException("Product is inactive", nameof(product));
+			}
+
 			if (!product.CanBeBoughtOnCredit &&
 				product.Price * amount > user.Balance)
 			{
@@ -142,9 +147,11 @@ namespace FClub.BLL
 
 			try
 			{
+				transaction.User.OnBalanceNotification += UserBalanceWarning;
 				transaction.Execute();
 				m_transactionLogger.Log(transaction);
 				Transactions.Insert(transaction);
+				transaction.User.OnBalanceNotification -= UserBalanceWarning;
 			}
 			catch
 			{

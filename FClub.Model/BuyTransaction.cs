@@ -36,16 +36,5 @@ namespace FClub.Model
 		{ }
 
 		public Product Product { get; }
-
-		public override void Execute()
-		{
-			if (!Product.CanBeBoughtOnCredit && 
-				User.Balance + Amount < 0)
-			{
-				throw new InsufficientCreditsException(User, Product);
-			}
-
-			base.Execute();
-		}
 	}
 }
