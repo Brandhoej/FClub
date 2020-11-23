@@ -10,11 +10,11 @@ namespace FClub.UI
 	public class StregsystemCLI : IStregsystemUI
 	{
 		public event stregsystemEvent CommandEntered;
-		private readonly ISceneManager m_sceneManager;
+		private readonly ISceneManager<ConsoleScene> m_sceneManager;
 
 		public StregsystemCLI()
 		{
-			m_sceneManager = new SceneManager<ConsoleScene>();
+			m_sceneManager = new SceneManager<ConsoleScene, IConsoleSceneInput>();
 		}
 
 		public bool Running { get; private set; }
@@ -37,11 +37,77 @@ namespace FClub.UI
 					DisplayAdmin();
 				}
 
-				MenuComponentEvent _event = new MenuComponentEvent(_keyInfo);
-				m_sceneManager.CurrentScene?.Event(_event);
+				IConsoleSceneInput _event = new ConsoleSceneInput();
+				m_sceneManager.CurrentScene.HandleInput(_event);
 			}
 		}
 
+		public void DisplayProduct(Product product)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void DisplayProducts(IEnumerable<Product> products)
+		{
+			Console.WriteLine("Test");
+		}
+
+		public void DisplayUserBuyInterface(User user, IEnumerable<Product> products)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void DisplayUserInformation(User user, IEnumerable<Transaction> transactions)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void DisplayUserBuysProduct(BuyTransaction transaction)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void DisplayUserBuysProduct(int count, BuyTransaction transaction)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void DisplayUserNotFound(string username)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void DisplayProductNotFound(string product)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void DisplayInsufficientCash(User user, Product product)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void DisplayGeneralError(string errorString)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void DisplayTooManyArgumentsError(string command)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void DisplayAdminCommandNotFoundMessage(string adminCommand)
+		{
+			throw new NotImplementedException();
+		}
+
+		private void DisplayAdmin()
+		{
+
+		}
+
+		/*
 		private void DisplayAdmin()
 		{
 			Label _adminInfo = new Label("You are now accessing admin controls");
@@ -231,6 +297,7 @@ namespace FClub.UI
 			m_sceneManager.Swap(_scene);
 			m_sceneManager.Render();
 		}
+		*/
 
 		public void Stop()
 		{
