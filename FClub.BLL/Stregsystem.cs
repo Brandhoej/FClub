@@ -151,11 +151,10 @@ namespace FClub.BLL
 				transaction.Execute();
 				m_transactionLogger.Log(transaction);
 				Transactions.Insert(transaction);
-				transaction.User.OnBalanceNotification -= UserBalanceWarning;
 			}
-			catch
+			finally
 			{
-				throw;
+				transaction.User.OnBalanceNotification -= UserBalanceWarning;
 			}
 		}
 	}

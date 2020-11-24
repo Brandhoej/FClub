@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FClub.UI
+namespace FClub.UI.Scene
 {
 	public class MenuComponentEvent : IMenuComponentEvent
 	{

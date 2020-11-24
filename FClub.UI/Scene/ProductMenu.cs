@@ -1,8 +1,6 @@
-﻿using FClub.Model;
-using System;
-using System.Collections.Generic;
-
-namespace FClub.UI
+﻿
+/*
+namespace FClub.UI.Scene
 {
 	public class ProductMenu : BaseMenuComponent
 	{
@@ -34,3 +32,4 @@ namespace FClub.UI
 		}
 	}
 }
+*/

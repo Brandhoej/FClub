@@ -1,6 +1,5 @@
 ﻿using FClub.Model;
 using System.Collections.Generic;
-using System.Text;
 
 namespace FClub.UI
 {

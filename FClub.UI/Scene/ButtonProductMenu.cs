@@ -1,9 +1,6 @@
-﻿using FClub.Model;
-using System;
-using System.Collections.Generic;
-
-namespace FClub.UI
+﻿namespace FClub.UI.Scene
 {
+	/*
 	public class ButtonProductMenu : BaseMenuComponent
 	{
 		public IList<Button> buttons;
@@ -50,4 +47,5 @@ namespace FClub.UI
 			}
 		}
 	}
+	*/
 }

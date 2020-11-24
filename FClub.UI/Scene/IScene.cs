@@ -1,9 +1,4 @@
-﻿using System.Text;
-using System.Linq;
-using System.Diagnostics;
-using System.Collections;
-
-namespace FClub.UI
+﻿namespace FClub.UI.Scene
 {
 	public interface IScene<TInput> : IRenderable where TInput : ISceneInput
 	{
@@ -11,5 +6,6 @@ namespace FClub.UI
 		IScene<TInput> AddMenu(IMenuComponent<TInput> menuComponent);
 		void HandleInput(TInput input);
 		void SetFocus(IMenuComponent<TInput> menuComponent);
+		IScene<TInput> SetNavigationFor(IMenuComponent<TInput> from, ISceneNavigationDirection direction, IMenuComponent<TInput> to);
 	}
 }

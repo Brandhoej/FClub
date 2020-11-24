@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Linq;
 using System;
 using System.Diagnostics;
+using FClub.UI.Scene;
 
 namespace FClub.Controller
 {
@@ -56,13 +57,27 @@ namespace FClub.Controller
 		public IStregsystemCommandResult Execute(string name, string parameters)
 		{
 			StregsystemCommand cmd = m_parser.Parse(name, parameters);
-			return cmd?.Run(this, parameters) ?? default;
+			try
+			{
+				return cmd?.Run(this, parameters) ?? default;
+			}
+			catch (Exception ex)
+			{
+				m_stregsystemUI.DisplayGeneralError(ex.Message);
+			}
+			return new Error();
 		}
 
 		[Route("/users")]
 		public IStregsystemCommandResult Users(string username)
 		{
 			User _user = m_stregsystem.GetUserByUsername(username);
+			if (_user == null)
+			{
+				m_stregsystemUI.DisplayUserNotFound(username);
+				return new Error();
+			}
+
 			m_stregsystemUI.DisplayUserBuyInterface(_user, m_stregsystem.ActiveProducts);
 			return new Ok();
 		}
@@ -71,6 +86,12 @@ namespace FClub.Controller
 		public IStregsystemCommandResult UsersInfo(string username)
 		{
 			User _user = m_stregsystem.GetUserByUsername(username);
+			if (_user == null)
+			{
+				m_stregsystemUI.DisplayUserNotFound(username);
+				return new Error();
+			}
+
 			m_stregsystemUI.DisplayUserInformation(_user, m_stregsystem.GetTransactions(_user, 10));
 			return new Ok();
 		}
@@ -79,7 +100,19 @@ namespace FClub.Controller
 		public IStregsystemCommandResult Buy(string username, int productId, int amount = 1)
 		{
 			User _user = m_stregsystem.GetUserByUsername(username);
+			if (_user == null)
+			{
+				m_stregsystemUI.DisplayUserNotFound(username);
+				return new Error();
+			}
+
 			Product _product = m_stregsystem.GetProductById(productId);
+			if (_product == null)
+			{
+				m_stregsystemUI.DisplayProductNotFound(productId.ToString());
+				return new Error();
+			}
+
 			try
 			{
 				BuyTransaction _buyTransaction = m_stregsystem.BuyProduct(_user, _product, amount);
@@ -114,6 +147,12 @@ namespace FClub.Controller
 		public IStregsystemCommandResult AddCreditsToUser(string username, decimal amount)
 		{
 			User _user = m_stregsystem.GetUserByUsername(username);
+			if (_user == null)
+			{
+				m_stregsystemUI.DisplayUserNotFound(username);
+				return new Error();
+			}
+
 			m_stregsystem.AddCreditsToAccount(_user, amount);
 			return new Ok();
 		}
@@ -122,6 +161,12 @@ namespace FClub.Controller
 		public IStregsystemCommandResult ActivateProductCredit(int productId)
 		{
 			Product _product = m_stregsystem.GetProductById(productId);
+			if (_product == null)
+			{
+				m_stregsystemUI.DisplayProductNotFound(productId.ToString());
+				return new Error();
+			}
+
 			_product.CanBeBoughtOnCredit = true;
 			return new Ok();
 		}
@@ -130,6 +175,12 @@ namespace FClub.Controller
 		public IStregsystemCommandResult DeactivateProductCredit(int productId)
 		{
 			Product _product = m_stregsystem.GetProductById(productId);
+			if (_product == null)
+			{
+				m_stregsystemUI.DisplayProductNotFound(productId.ToString());
+				return new Error();
+			}
+
 			_product.CanBeBoughtOnCredit = false;
 			return new Ok();
 		}
@@ -138,6 +189,12 @@ namespace FClub.Controller
 		public IStregsystemCommandResult ActivateProduct(int productId)
 		{
 			Product _product = m_stregsystem.GetProductById(productId);
+			if (_product == null)
+			{
+				m_stregsystemUI.DisplayProductNotFound(productId.ToString());
+				return new Error();
+			}
+
 			_product.Active = true;
 			return new Ok();
 		}
@@ -146,6 +203,12 @@ namespace FClub.Controller
 		public IStregsystemCommandResult DeactivateProduct(int productId)
 		{
 			Product _product = m_stregsystem.GetProductById(productId);
+			if (_product == null)
+			{
+				m_stregsystemUI.DisplayProductNotFound(productId.ToString());
+				return new Error();
+			}
+
 			_product.Active = false;
 			return new Ok();
 		}

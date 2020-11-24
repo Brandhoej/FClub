@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace FClub.UI
+namespace FClub.UI.Scene
 {
 	public class SceneManager<TScene, TSceneInput> : ISceneManager<TScene> where TSceneInput : ISceneInput where TScene : IScene<TSceneInput>
 	{
@@ -21,6 +21,11 @@ namespace FClub.UI
 		public void Render()
 		{
 			CurrentScene.Render();
+		}
+
+		public void SetScene(TScene scene)
+		{
+			CurrentScene = scene;
 		}
 
 		public void Swap(string name)
