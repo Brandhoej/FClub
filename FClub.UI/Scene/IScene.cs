@@ -6,6 +6,6 @@
 		IScene<TInput> AddMenu(IMenuComponent<TInput> menuComponent);
 		void HandleInput(TInput input);
 		void SetFocus(IMenuComponent<TInput> menuComponent);
-		IScene<TInput> SetNavigationFor(IMenuComponent<TInput> from, ISceneNavigationDirection direction, IMenuComponent<TInput> to);
+		IScene<TInput> SetNavigationFor(IMenuComponent<TInput> from, SceneNavigationDirection direction, IMenuComponent<TInput> to);
 	}
 }

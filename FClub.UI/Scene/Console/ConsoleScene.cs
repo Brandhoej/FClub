@@ -29,7 +29,7 @@ namespace FClub.UI.Scene.Console
 			return this;
 		}
 
-		public IScene<IConsoleSceneInput> SetNavigationFor(IMenuComponent<IConsoleSceneInput> from, ISceneNavigationDirection direction, IMenuComponent<IConsoleSceneInput> to)
+		public IScene<IConsoleSceneInput> SetNavigationFor(IMenuComponent<IConsoleSceneInput> from, SceneNavigationDirection direction, IMenuComponent<IConsoleSceneInput> to)
 		{
 			m_sceneNavigationHandler.Addnavigation(from, direction, to);
 			return this;
@@ -41,10 +41,10 @@ namespace FClub.UI.Scene.Console
 
 			switch (input.ConsoleKeyInfo.Key)
 			{
-				case ConsoleKey.UpArrow:    m_sceneNavigationHandler.Move(ISceneNavigationDirection.Up);    break;
-				case ConsoleKey.DownArrow:  m_sceneNavigationHandler.Move(ISceneNavigationDirection.Down);  break;
-				case ConsoleKey.RightArrow: m_sceneNavigationHandler.Move(ISceneNavigationDirection.Right); break;
-				case ConsoleKey.LeftArrow:  m_sceneNavigationHandler.Move(ISceneNavigationDirection.Left);  break;
+				case ConsoleKey.UpArrow:    m_sceneNavigationHandler.Move(SceneNavigationDirection.Up);    break;
+				case ConsoleKey.DownArrow:  m_sceneNavigationHandler.Move(SceneNavigationDirection.Down);  break;
+				case ConsoleKey.RightArrow: m_sceneNavigationHandler.Move(SceneNavigationDirection.Right); break;
+				case ConsoleKey.LeftArrow:  m_sceneNavigationHandler.Move(SceneNavigationDirection.Left);  break;
 				default: HandleDefaultInput(input); break;
 			}
 		}

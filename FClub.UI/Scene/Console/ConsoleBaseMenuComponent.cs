@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace FClub.UI.Scene.Console
 {
-	public abstract class ConsoleBaseMenuComponent : BaseMenuComponent<IConsoleSceneInput>
+	public class ConsoleBaseMenuComponent : BaseMenuComponent<IConsoleSceneInput>
 	{
 		private int m_x = -1;
 		private int m_y = -1;
@@ -108,9 +108,12 @@ namespace FClub.UI.Scene.Console
 
 		public override void ReRender()
 		{
-			System.Console.CursorLeft = X;
-			System.Console.CursorTop = Y;
-			Render();
+			if (X >= 0 && Y >= 0)
+			{ 
+				System.Console.CursorLeft = X;
+				System.Console.CursorTop = Y;
+				Render();
+			}
 		}
 
 		protected virtual void OnFocused() { }

@@ -40,13 +40,13 @@ namespace FClub.Controller
 
 		private void SetEndpoints(MethodInfo methodInfo)
 		{
-			if (methodInfo.GetCustomAttributes(typeof(RouteAttribute)) is RouteAttribute[] _routes)
+			if (methodInfo.GetCustomAttributes(typeof(RouteAttribute)) is IEnumerable<RouteAttribute> _routes)
 			{
 				SetEndpoints(methodInfo, _routes);
 			}
 		}
 
-		private void SetEndpoints(MethodInfo methodInfo, RouteAttribute[] routes)
+		private void SetEndpoints(MethodInfo methodInfo, IEnumerable<RouteAttribute> routes)
 		{
 			foreach (RouteAttribute _route in routes)
 			{

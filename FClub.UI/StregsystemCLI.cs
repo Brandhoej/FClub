@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using FClub.UI.Scene;
 using FClub.UI.Scene.Console;
 using FClub.UI.Scene.Console.Prefabs;
+using System.Linq;
 
 namespace FClub.UI
 {
@@ -52,11 +53,10 @@ namespace FClub.UI
 
 		public void DisplayProducts(IEnumerable<Product> products)
 		{
-			IConsoleScene _consoleScene = new ConsoleScene();
-			ConsoleLabeledProductMenu _consoleLabeledProductMenu = new ConsoleLabeledProductMenu(products, input =>
+			void Quickbuy(string input)
 			{
-				string[] _inputSplit = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-				if (_inputSplit.Length == 1)
+				string[] _split = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+				if (_split.Length == 1)
 				{
 					CommandEntered("/users", input);
 				}
@@ -64,158 +64,219 @@ namespace FClub.UI
 				{
 					CommandEntered("/buy", input);
 				}
-			});
-			_consoleScene.AddMenu(_consoleLabeledProductMenu);
+			}
 
+			IConsoleScene _consoleScene = new ConsoleScene();
+			IConsoleMenuBuilder _consoleMenuBuilder = new ConsoleMenuBuilder(_consoleScene);
+			_consoleMenuBuilder
+				.AddLabel("Du kan \"sætte streger\" på to forskellige måder:")
+				.AddLabel("1. Indtast dit brugernavn nedenfor. Du vil så blive præsenteret for en interaktiv menu.")
+				.AddLabel("2. Indtast dit brugernavn og et eller flere produkt ID (adskilt med \"space\"). Købet vil blive direkte registreret uden yderligere input. Under feltet vil der vises en bekræftelse af købet.")
+				.MultipleNext(1).AddLineSpacer()
+				.AddForeach(products, _product => _consoleMenuBuilder.AddLabel(_product.Name))
+				.MultipleNext(1).AddLineSpacer()
+				.AddLabel("Qucibuy>", false)
+				.AddButtonTextField(Quickbuy).Focus();
+			
+			_consoleScene.AddMenu(_consoleMenuBuilder.Build());
 			m_sceneManager.SetScene(_consoleScene);
 			m_sceneManager.Render();
-			_consoleScene.SetFocus(_consoleLabeledProductMenu);
 		}
 
 		public void DisplayUserBuyInterface(User user, IEnumerable<Product> products)
 		{
-			ConsoleScene _scene = new ConsoleScene();
-			ConsoleInteractableProductMenu consoleInteractableProductMenu = new ConsoleInteractableProductMenu(_scene, products, 
-				product => CommandEntered("/buy", $"{user.Username} {product.Id}"), 
-				() => CommandEntered("/products", string.Empty),
-				() => CommandEntered("/users/info", user.Username));
-			_scene.AddMenu(consoleInteractableProductMenu);
-			m_sceneManager.SetScene(_scene);
+			IConsoleScene _consoleScene = new ConsoleScene();
+			IConsoleMenuBuilder _consoleMenuBuilder = new ConsoleMenuBuilder(_consoleScene);
+			_consoleMenuBuilder
+				.AddLabel(user.ToString())
+				.AddLabel($"Du har {user.Balance} kroner til gode!")
+				.MultipleNext(1).AddLineSpacer()
+				.AddForeach(products, product =>
+				{
+					_consoleMenuBuilder
+						.AddButton(product.Name, () => CommandEntered("/buy", $"{user.Username} {product.Id}"))
+						.IgnoreNext().AddLineSpacer()
+						.AddBiNavigationTo(SceneNavigationDirection.Down);
+				})
+				.IgnoreNext().AddLineSpacer()
+				.AddButton("Tilbage", () => CommandEntered("/products", string.Empty))
+				.IgnoreNext().AddLabel("     ", false)
+				.AddBiNavigationTo(SceneNavigationDirection.Right)
+				.AddButton("User info", () => CommandEntered("/users/info", user.Username)).Focus();
+
+			_consoleScene.AddMenu(_consoleMenuBuilder.Build());
+			m_sceneManager.SetScene(_consoleScene);
 			m_sceneManager.Render();
-			_scene.SetFocus(consoleInteractableProductMenu);
 		}
 
 		public void DisplayUserInformation(User user, IEnumerable<Transaction> transactions)
 		{
-			ConsoleScene _scene = new ConsoleScene();
-			ConsoleButton _backButton = new ConsoleButton("Back", () => CommandEntered("/users", user.Username));
-			_scene.AddMenu(new ConsoleUserInformationMenu(user, transactions));
-			_scene.AddMenu(new ConsoleLabel());
+			IConsoleScene _consoleScene = new ConsoleScene();
+			IConsoleMenuBuilder _consoleMenuBuilder = new ConsoleMenuBuilder(_consoleScene);
 
-			_scene.AddMenu(_backButton);
-			m_sceneManager.SetScene(_scene);
+			_consoleMenuBuilder
+				.AddLabel(user.ToString())
+				.AddLineSpacer()
+				.AddLabel(transactions.Count() == 0 ? "Du har ingen transaktioner" : "Transaktioner:")
+				.AddForeach(transactions, transaction => _consoleMenuBuilder.AddLabel(transaction.ToString()))
+				.AddLineSpacer()
+				.AddButton("Tilbage", () => CommandEntered("/users", user.Username)).Focus();
+
+			_consoleScene.AddMenu(_consoleMenuBuilder.Build());
+			m_sceneManager.SetScene(_consoleScene);
 			m_sceneManager.Render();
-			_scene.SetFocus(_backButton);
 		}
 
 		public void DisplayUserBuysProduct(BuyTransaction transaction)
 		{
-			ConsoleScene _scene = new ConsoleScene();
-			ConsoleButton _backButton = new ConsoleButton("Back", () => CommandEntered("/users", transaction.User.Username));
-			_scene.AddMenu(new ConsoleLabel(transaction));
-			_scene.AddMenu(_backButton);
+			IConsoleScene _consoleScene = new ConsoleScene();
+			IConsoleMenuBuilder _consoleMenuBuilder = new ConsoleMenuBuilder(_consoleScene);
 
-			m_sceneManager.SetScene(_scene);
+			_consoleMenuBuilder
+				.AddLabel($"Du har lige købt {transaction.Product.Name} til {transaction.Product.Price} kroner")
+				.AddLineSpacer()
+				.AddLabel($"Info: {transaction}")
+				.AddLineSpacer()
+				.AddButton("Tilbage", () => CommandEntered("/users", transaction.User.Username)).Focus();
+
+			_consoleScene.AddMenu(_consoleMenuBuilder.Build());
+			m_sceneManager.SetScene(_consoleScene);
 			m_sceneManager.Render();
-			_scene.SetFocus(_backButton);
 		}
 
 		public void DisplayUserBuysProduct(int count, BuyTransaction transaction)
 		{
-			ConsoleScene _scene = new ConsoleScene();
-			ConsoleButton _backButton = new ConsoleButton("Back", () => CommandEntered("/users", transaction.User.Username));
-			_scene.AddMenu(new ConsoleLabel(transaction));
-			_scene.AddMenu(new ConsoleLabel(count));
-			_scene.AddMenu(_backButton);
+			IConsoleScene _consoleScene = new ConsoleScene();
+			IConsoleMenuBuilder _consoleMenuBuilder = new ConsoleMenuBuilder(_consoleScene);
 
-			m_sceneManager.SetScene(_scene);
+			_consoleMenuBuilder
+				.AddLabel($"Du har lige købt {count} af {transaction.Product.Name} til {transaction.Product.Price} kroner")
+				.AddLineSpacer()
+				.AddLabel($"Info: {transaction}")
+				.AddLineSpacer()
+				.AddButton("Tilbage", () => CommandEntered("/users", transaction.User.Username)).Focus();
+
+			_consoleScene.AddMenu(_consoleMenuBuilder.Build());
+			m_sceneManager.SetScene(_consoleScene);
 			m_sceneManager.Render();
-			_scene.SetFocus(_backButton);
 		}
 
 		public void DisplayUserNotFound(string username)
 		{
-			ConsoleScene _scene = new ConsoleScene();
-			ConsoleButton _backButton = new ConsoleButton("Back", () => CommandEntered("/products", string.Empty));
-			_scene.AddMenu(new ConsoleLabel($"User not found: {username}"));
-			_scene.AddMenu(_backButton);
+			IConsoleScene _consoleScene = new ConsoleScene();
+			IConsoleMenuBuilder _consoleMenuBuilder = new ConsoleMenuBuilder(_consoleScene);
 
-			m_sceneManager.SetScene(_scene);
+			_consoleMenuBuilder
+				.AddLabel($"Bruger \"{username}\" blev ikke fundet")
+				.AddLabel($"Det var sært, {username}.")
+				.AddLabel($"Det lader ikke til, at du er registreret som aktivt medlem af F-klubben i TREOENs database.")
+				.AddLabel($"Måske tastede du forkert?")
+				.AddLabel($"Hvis du ikke er medlem, kan du blive det ved at følge guiden på http://fklub.dk.")
+				.AddLineSpacer()
+				.AddButton("Tilbage", () => CommandEntered("/products", string.Empty)).Focus();
+
+			_consoleScene.AddMenu(_consoleMenuBuilder.Build());
+			m_sceneManager.SetScene(_consoleScene);
 			m_sceneManager.Render();
-			_scene.SetFocus(_backButton);
 		}
 
 		public void DisplayProductNotFound(string product)
 		{
-			ConsoleScene _scene = new ConsoleScene();
-			ConsoleButton _backButton = new ConsoleButton("Back", () => CommandEntered("/products", string.Empty));
-			_scene.AddMenu(new ConsoleLabel($"Product not found: {product}"));
-			_scene.AddMenu(_backButton);
+			IConsoleScene _consoleScene = new ConsoleScene();
+			IConsoleMenuBuilder _consoleMenuBuilder = new ConsoleMenuBuilder(_consoleScene);
 
-			m_sceneManager.SetScene(_scene);
+			_consoleMenuBuilder
+				.AddLabel($"Produkt \"{product}\" blev ikke fundet")
+				.AddLineSpacer()
+				.AddButton("Tilbage", () => CommandEntered("/products", string.Empty)).Focus();
+
+			_consoleScene.AddMenu(_consoleMenuBuilder.Build());
+			m_sceneManager.SetScene(_consoleScene);
 			m_sceneManager.Render();
-			_scene.SetFocus(_backButton);
 		}
 
 		public void DisplayInsufficientCash(User user, Product product)
 		{
-			ConsoleScene _scene = new ConsoleScene();
-			ConsoleButton _backButton = new ConsoleButton("Back", () => CommandEntered("/users", user.Username));
-			_scene.AddMenu(new ConsoleLabel($"User: {user.Username} has insufficient cash for {product.Name}"));
-			_scene.AddMenu(_backButton);
+			IConsoleScene _consoleScene = new ConsoleScene();
+			IConsoleMenuBuilder _consoleMenuBuilder = new ConsoleMenuBuilder(_consoleScene);
 
-			m_sceneManager.SetScene(_scene);
+			_consoleMenuBuilder
+				.AddLabel($"Bruger: '{user.Username}' har ikke nok penge til '{product.Name}' ({product.Price} kroner)")
+				.AddLineSpacer()
+				.AddButton("Tilbage", () => CommandEntered("/users", user.Username)).Focus();
+
+			_consoleScene.AddMenu(_consoleMenuBuilder.Build());
+			m_sceneManager.SetScene(_consoleScene);
 			m_sceneManager.Render();
-			_scene.SetFocus(_backButton);
 		}
 
 		public void DisplayGeneralError(string errorString)
 		{
-			ConsoleScene _scene = new ConsoleScene();
-			ConsoleButton _backButton = new ConsoleButton("Back", () => CommandEntered("/products", string.Empty));
-			_scene.AddMenu(new ConsoleLabel($"Error: {errorString}"));
-			_scene.AddMenu(_backButton);
+			IConsoleScene _consoleScene = new ConsoleScene();
+			IConsoleMenuBuilder _consoleMenuBuilder = new ConsoleMenuBuilder(_consoleScene);
 
-			m_sceneManager.SetScene(_scene);
+			_consoleMenuBuilder
+				.AddLabel($"Fejl: '{errorString}'")
+				.AddLineSpacer()
+				.AddButton("Tilbage", () => CommandEntered("/products", string.Empty)).Focus();
+
+			_consoleScene.AddMenu(_consoleMenuBuilder.Build());
+			m_sceneManager.SetScene(_consoleScene);
 			m_sceneManager.Render();
-			_scene.SetFocus(_backButton);
 		}
 
 		public void DisplayTooManyArgumentsError(string command)
 		{
-			ConsoleScene _scene = new ConsoleScene();
-			ConsoleButton _backButton = new ConsoleButton("Back", () => CommandEntered("/products", string.Empty));
-			_scene.AddMenu(new ConsoleLabel($"Command has too many arguments: '{command}'"));
-			_scene.AddMenu(_backButton);
+			IConsoleScene _consoleScene = new ConsoleScene();
+			IConsoleMenuBuilder _consoleMenuBuilder = new ConsoleMenuBuilder(_consoleScene);
 
-			m_sceneManager.SetScene(_scene);
+			_consoleMenuBuilder
+				.AddLabel($"For mange argumenter: '{command}'")
+				.AddLineSpacer()
+				.AddButton("Tilbage", () => CommandEntered("/products", string.Empty)).Focus();
+
+			_consoleScene.AddMenu(_consoleMenuBuilder.Build());
+			m_sceneManager.SetScene(_consoleScene);
 			m_sceneManager.Render();
-			_scene.SetFocus(_backButton);
 		}
 
 		public void DisplayAdminCommandNotFoundMessage(string adminCommand)
 		{
-			ConsoleScene _scene = new ConsoleScene();
-			ConsoleButton _backButton = new ConsoleButton("Back", () => CommandEntered("/products", string.Empty));
-			_scene.AddMenu(new ConsoleLabel($"Admin command not found: {adminCommand}"));
-			_scene.AddMenu(_backButton);
+			IConsoleScene _consoleScene = new ConsoleScene();
+			IConsoleMenuBuilder _consoleMenuBuilder = new ConsoleMenuBuilder(_consoleScene);
 
-			m_sceneManager.SetScene(_scene);
+			_consoleMenuBuilder
+				.AddLabel($"Admi kommanda: '{adminCommand}'")
+				.AddLineSpacer()
+				.AddButton("Tilbage", () => CommandEntered("/products", string.Empty)).Focus();
+
+			_consoleScene.AddMenu(_consoleMenuBuilder.Build());
+			m_sceneManager.SetScene(_consoleScene);
 			m_sceneManager.Render();
-			_scene.SetFocus(_backButton);
 		}
 
 		private void DisplayAdmin()
 		{
-			ConsoleScene _scene = new ConsoleScene();
-			ConsoleButton _backButton = new ConsoleButton("Back", () => CommandEntered("/products", string.Empty));
-			ConsoleButtonTextField _consoleButtonTextField = new ConsoleButtonTextField(input =>
+			void ExecuteAdminCommand(string input)
 			{
 				string[] _split = input.Split(" ", StringSplitOptions.RemoveEmptyEntries);
 				CommandEntered($":{_split[0]}", string.Join(' ', _split[1..^0]));
-			});
-			_scene.AddMenu(new ConsoleLabel("Admin UI"));
-			_scene.AddMenu(new ConsoleLabel(":", false));
-			_scene.AddMenu(_consoleButtonTextField);
-			_scene.AddMenu(new ConsoleLabel());
-			_scene.AddMenu(_backButton);
+			}
 
-			_scene.SetNavigationFor(_consoleButtonTextField, ISceneNavigationDirection.Down, _backButton);
-			_scene.SetNavigationFor(_backButton, ISceneNavigationDirection.Up, _consoleButtonTextField);
+			IConsoleScene _consoleScene = new ConsoleScene();
+			IConsoleMenuBuilder _consoleMenuBuilder = new ConsoleMenuBuilder(_consoleScene);
 
-			m_sceneManager.SetScene(_scene);
+			_consoleMenuBuilder
+				.AddLabel("Indsæt admin kommando")
+				.AddLabel(":", false)
+				.AddButtonTextField(ExecuteAdminCommand)
+				.AddBiNavigationTo(SceneNavigationDirection.Down)
+				.IgnoreNext().AddLineSpacer()
+				.AddButton("Tilbage", () => CommandEntered("/products", string.Empty)).Focus();
+
+			_consoleScene.AddMenu(_consoleMenuBuilder.Build());
+			m_sceneManager.SetScene(_consoleScene);
 			m_sceneManager.Render();
-			_scene.SetFocus(_consoleButtonTextField);
 		}
 
 		public void Stop()

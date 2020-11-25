@@ -4,32 +4,18 @@ using System.Reflection;
 
 namespace FClub.Controller.Command
 {
-	public interface IStregsystemCommandResult
-	{
-
-	}
-
-	internal interface IStregsystemCommand
-	{
-		IStregsystemCommandResult Run(object thisRef, string input);
-		IStregsystemCommandResult Run(object thisRef, object[] parameters);
-
-		bool Match(string name, string input);
-		object[] GetParamsFromInput(string input);
-	}
-
 	internal class StregsystemCommand : IStregsystemCommand
 	{
 		private readonly string m_name;
+		private MethodInfo m_endpoint;
 
 		public StregsystemCommand(string name, MethodInfo endpoint)
 		{
 			m_name = name;
-			MethodInfo = endpoint;
+			m_endpoint = endpoint;
 		}
 
-		private MethodInfo MethodInfo;
-		private ParameterInfo[] ParameterInfos => MethodInfo.GetParameters();
+		private ParameterInfo[] ParameterInfos => m_endpoint.GetParameters();
 
 		public IStregsystemCommandResult Run(object thisRef, string input)
 		{
@@ -45,7 +31,7 @@ namespace FClub.Controller.Command
 
 		public IStregsystemCommandResult Run(object thisRef, object[] parameters)
 		{
-			return (IStregsystemCommandResult)MethodInfo.Invoke(thisRef, parameters);
+			return (IStregsystemCommandResult)m_endpoint.Invoke(thisRef, parameters);
 		}
 
 		public object[] GetParamsFromInput(string input)

@@ -119,7 +119,7 @@ namespace FClub.BLL
 
 			return Transactions
 				.FindAll(transaction => transaction.User == user)
-				.OrderBy(transaction => transaction.Date)
+				.OrderByDescending(transaction => transaction.Date)
 				.Take(count);
 		}
 

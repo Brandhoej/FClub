@@ -13,12 +13,12 @@ namespace FClub.UI.Scene
 
 		public IMenuComponent<TSceneInput> Focused { get; private set; }
 
-		public void Addnavigation(IMenuComponent<TSceneInput> from, ISceneNavigationDirection direction, IMenuComponent<TSceneInput> to)
+		public void Addnavigation(IMenuComponent<TSceneInput> from, SceneNavigationDirection direction, IMenuComponent<TSceneInput> to)
 		{
 			m_edges.Add(new Edge(from, direction, to));
 		}
 
-		public void Move(ISceneNavigationDirection direction)
+		public void Move(SceneNavigationDirection direction)
 		{
 			foreach (Edge _edge in m_edges)
 			{
@@ -50,7 +50,7 @@ namespace FClub.UI.Scene
 
 		private class Edge
 		{
-			public Edge(IMenuComponent<TSceneInput> from, ISceneNavigationDirection direction, IMenuComponent<TSceneInput> to)
+			public Edge(IMenuComponent<TSceneInput> from, SceneNavigationDirection direction, IMenuComponent<TSceneInput> to)
 			{
 				From = from;
 				Direction = direction;
@@ -58,7 +58,7 @@ namespace FClub.UI.Scene
 			}
 
 			public IMenuComponent<TSceneInput> From { get; }
-			public ISceneNavigationDirection Direction { get; }
+			public SceneNavigationDirection Direction { get; }
 			public IMenuComponent<TSceneInput> To { get; }
 		}
 	}

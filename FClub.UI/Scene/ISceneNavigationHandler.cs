@@ -4,8 +4,8 @@
 	{
 		IMenuComponent<TSceneInput> Focused { get; }
 
-		void Addnavigation(IMenuComponent<TSceneInput> from, ISceneNavigationDirection direction, IMenuComponent<TSceneInput> to);
+		void Addnavigation(IMenuComponent<TSceneInput> from, SceneNavigationDirection direction, IMenuComponent<TSceneInput> to);
 		void SetFocus(IMenuComponent<TSceneInput> menuComponent);
-		void Move(ISceneNavigationDirection direction);
+		void Move(SceneNavigationDirection direction);
 	}
 }
