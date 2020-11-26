@@ -10,6 +10,7 @@ using System.Linq;
 using System;
 using System.Diagnostics;
 using FClub.UI.Scene;
+using FClub.Core;
 
 namespace FClub.Controller
 {
@@ -56,16 +57,26 @@ namespace FClub.Controller
 
 		public IStregsystemCommandResult Execute(string name, string parameters)
 		{
-			StregsystemCommand cmd = m_parser.Parse(name, parameters);
 			try
 			{
-				return cmd?.Run(this, parameters) ?? default;
+				StregsystemCommand cmd = m_parser.Parse(name, parameters);
+				IStregsystemCommandResult _result = cmd?.Run(this, parameters) ?? default;
+				if (_result is Error _error && !string.IsNullOrWhiteSpace(_error.Message))
+				{
+					m_stregsystemUI.DisplayGeneralError(_error.Message);
+				}
+				return _result;
+			}
+			catch (InvalidOperationException)
+			{
+				m_stregsystemUI.DisplayGeneralError("Kommando kunne ikke findes. Måske har parameterne de forkerte typer");
+				return new Error();
 			}
 			catch (Exception ex)
 			{
 				m_stregsystemUI.DisplayGeneralError(ex.Message);
+				return new Error();
 			}
-			return new Error();
 		}
 
 		[Route("/users")]
@@ -96,8 +107,19 @@ namespace FClub.Controller
 			return new Ok();
 		}
 
+		[Route("/multi-buy")]
+		public IStregsystemCommandResult MultiBuy(string username, int amount, int productId)
+		{
+			return Buy(username, productId, amount);
+		}
+
 		[Route("/buy")]
-		public IStregsystemCommandResult Buy(string username, int productId, int amount = 1)
+		public IStregsystemCommandResult Buy(string username, int productId)
+		{
+			return Buy(username, productId, 1);
+		}
+
+		private IStregsystemCommandResult Buy(string username, int productId, int amount = 1)
 		{
 			User _user = m_stregsystem.GetUserByUsername(username);
 			if (_user == null)
@@ -153,8 +175,16 @@ namespace FClub.Controller
 				return new Error();
 			}
 
-			m_stregsystem.AddCreditsToAccount(_user, amount);
-			return new Ok();
+			try
+			{
+				m_stregsystem.AddCreditsToAccount(_user, amount);
+				return new Ok();
+			}
+			catch (ArgumentException exception)
+			{
+				m_stregsystemUI.DisplayGeneralError(exception.Message);
+				return new Error();
+			}
 		}
 
 		[Route(":crediton")]
@@ -221,9 +251,9 @@ namespace FClub.Controller
 			return new Ok();
 		}
 
-		private string StregsystemUI_CommandEntered(string name, string parameters)
+		private IStregsystemCommandResult StregsystemUI_CommandEntered(string name, string parameters)
 		{
-			return (Execute(name, parameters) ?? new Error()).ToString();
+			return Execute(name, parameters) ?? new Error("Uhåndteret fejl...");
 		}
 	}
 }

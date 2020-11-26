@@ -6,15 +6,6 @@ using System.Text;
 
 namespace FClub.DAL.IO
 {
-	public interface IUsersReader
-	{
-		string Separator { get; }
-		string Path { get; }
-
-		IEnumerable<User> ReadUsers();
-		User CreateUserFromLine(string line);
-	}
-
 	public class UsersReader : IUsersReader
 	{
 		public UsersReader(string separator, string path)

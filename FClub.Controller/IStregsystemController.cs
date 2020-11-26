@@ -1,4 +1,5 @@
 ﻿using FClub.Controller.Command;
+using FClub.Core;
 
 namespace FClub.Controller
 {

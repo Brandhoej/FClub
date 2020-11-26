@@ -382,10 +382,10 @@ namespace FClub.BLL.Tests
 
 			// Act
 			_user = new User(1, "Andreas", "Brandhoej", "Hyw", "akbr18@student.aau.dk", _startBalance);
-			_product1 = new Product(1, "Product1", 10, false, false);
-			_product2 = new Product(2, "Product2", 20, false, true);
-			_product3 = new Product(3, "Product2", 30, false, true);
-			_product4 = new Product(4, "Product2", 40, false, true);
+			_product1 = new Product(1, "Product1", 10, true, false);
+			_product2 = new Product(2, "Product2", 20, true, true);
+			_product3 = new Product(3, "Product2", 30, true, true);
+			_product4 = new Product(4, "Product2", 40, true, true);
 			_products = new CollectionRepository<Product>(new HashSet<Product>()
 			{
 				_product1,
@@ -405,11 +405,11 @@ namespace FClub.BLL.Tests
 
 			// Assert
 			Assert.AreEqual(3, _userTransactions.Count);
-			Assert.AreEqual(-10, _userTransactions[0].Amount);
-			Assert.AreEqual(-30, _userTransactions[1].Amount);
-			Assert.AreEqual(-40, _userTransactions[2].Amount);
-			Assert.AreEqual(true, _userTransactions[0].Date < _userTransactions[1].Date);
-			Assert.AreEqual(true, _userTransactions[1].Date < _userTransactions[2].Date);
+			Assert.AreEqual(-20, _userTransactions[0].Amount);
+			Assert.AreEqual(-40, _userTransactions[1].Amount);
+			Assert.AreEqual(-30, _userTransactions[2].Amount);
+			Assert.AreEqual(true, _userTransactions[0].Date > _userTransactions[1].Date);
+			Assert.AreEqual(true, _userTransactions[1].Date > _userTransactions[2].Date);
 		}
 
 		[TestMethod]
@@ -563,7 +563,6 @@ namespace FClub.BLL.Tests
 			IFClubContext _fClubContext;
 			IUnitOfWork _unitOfWork;
 			IStregsystem _stregsystem;
-			bool _invoked = false;
 
 			// Act
 			_fClubContext = new HashsetFClubContext();
@@ -571,7 +570,6 @@ namespace FClub.BLL.Tests
 			_stregsystem = new Stregsystem(_unitOfWork);
 			_user = new User(1, "Andreas", "Brandhoej", "Hyw", "akbr18@student.aau.dk", 10);
 			_product = new Product(1, "product", 20, true, false);
-			_stregsystem.UserBalanceWarning += (user, product) => _invoked = true;
 			void Test()
 			{
 				_stregsystem.BuyProduct(_user, _product);
@@ -579,7 +577,6 @@ namespace FClub.BLL.Tests
 
 			// Assert
 			Assert.ThrowsException<InsufficientCreditsException>(Test);
-			Assert.AreEqual(true, _invoked);
 		}
 	}
 }

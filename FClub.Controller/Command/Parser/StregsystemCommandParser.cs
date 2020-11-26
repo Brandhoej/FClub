@@ -3,20 +3,14 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using System.Collections;
+using FClub.Core;
 
 namespace FClub.Controller.Command.Parser
 {
-	internal interface IStregsystemCommandParser
-	{
-		void Add(string endpoint, string name);
-		StregsystemCommand Parse(string name, string input);
-		IStregsystemCommandResult Run(object thisRef, string name, string input);
-	}
-
 	internal class StregsystemCommandParser : IStregsystemCommandParser
 	{
 		private readonly Type m_controller;
-		private ICollection<StregsystemCommand> m_commands;
+		private readonly ICollection<StregsystemCommand> m_commands;
 
 		public StregsystemCommandParser(Type Controller)
 		{
@@ -31,14 +25,7 @@ namespace FClub.Controller.Command.Parser
 
 		public StregsystemCommand Parse(string name, string input)
 		{
-			try
-			{
-				return m_commands.First(curr => curr.Match(name, input));
-			}
-			catch
-			{
-				return default;
-			}
+			return m_commands.First(curr => curr.Match(name, input));
 		}
 
 		public IStregsystemCommandResult Run(object thisRef, string name, string input)

@@ -246,6 +246,8 @@ namespace FClub.Model.Tests
 		[DataRow("akbr18@.student.aau.dk")]
 		[DataRow("akbr18@student.aau.dk-")]
 		[DataRow("akbr18@student.aau.dk.")]
+		[DataRow("akbr18@_")]
+		[DataRow("akbr18@")]
 		public void EmailSet_ThrowsException_IfEmailDoesNotFollowFormat(string email)
 		{
 			// Arrange

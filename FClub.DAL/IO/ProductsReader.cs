@@ -7,15 +7,6 @@ using System.Text;
 
 namespace FClub.DAL.IO
 {
-	public interface IProductsReader
-	{
-		string Separator { get; }
-		string Path { get; }
-
-		IEnumerable<Product> ReadProducts();
-		Product CreateProductFromLine(string line);
-	}
-
 	public class ProductsReader : IProductsReader
 	{
 		public ProductsReader(string separator, string path)
@@ -63,20 +54,13 @@ namespace FClub.DAL.IO
 				_deactiveDate = DateTime.ParseExact(_split[4], "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
 			}
 
-			try
+			if (_split.Length == 4)
 			{
-				if (_split.Length == 4)
-				{
-					return new Product(_id, _name, _price, _active, _canBeBoughtOnCredit);
-				}
-				if (_split.Length == 5)
-				{
-					return new SeasonalProduct(_id, _name, _price, _canBeBoughtOnCredit, default, _deactiveDate);
-				}
+				return new Product(_id, _name, _price, _active, _canBeBoughtOnCredit);
 			}
-			catch
+			if (_split.Length == 5)
 			{
-				throw;
+				return new SeasonalProduct(_id, _name, _price, _canBeBoughtOnCredit, default, _deactiveDate);
 			}
 			return default;
 		}

@@ -22,7 +22,7 @@ namespace FClub.Model
 			{
 				if (value < 1)
 				{
-					throw new ArgumentException(nameof(value), "Value cannot be less than 1");
+					throw new ArgumentException("Value cannot be less than 1", nameof(value));
 				}
 
 				m_id = value;

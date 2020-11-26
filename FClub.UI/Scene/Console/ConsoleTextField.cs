@@ -5,7 +5,7 @@ namespace FClub.UI.Scene.Console
 {
 	public class ConsoleTextField : ConsoleBaseMenuComponent
 	{
-		public string Text { get; private set; }
+		public string Text { get; private set; } = String.Empty;
 
 		protected override void OnHandleInput(IConsoleSceneInput input)
 		{
@@ -21,6 +21,7 @@ namespace FClub.UI.Scene.Console
 			if (IsFocused &&
 				Regex.IsMatch(character.ToString(), "[a-zA-Z0-9 ]"))
 			{
+				MoveCursorToEnd();
 				HighlightColors();
 				Text += character;
 				System.Console.Write(character);
@@ -40,6 +41,12 @@ namespace FClub.UI.Scene.Console
 			System.Console.Write(' ');
 			System.Console.CursorLeft--;
 			Text = Text[0..^1];
+		}
+
+		private void MoveCursorToEnd()
+		{
+			System.Console.CursorLeft = X + Text.Length;
+			System.Console.CursorTop = Y;
 		}
 	}
 }

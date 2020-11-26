@@ -44,10 +44,8 @@ namespace FClub.BLL.IO.Logging
 
 		private void WriteLine(params object[] columnValues)
 		{
-			using (StreamWriter _writer = File.AppendText(FullPath))
-			{
-				_writer.WriteLine(BuildLine(columnValues));
-			}
+			using StreamWriter _writer = File.AppendText(FullPath);
+			_writer.WriteLine(BuildLine(columnValues));
 		}
 
 		private string BuildLine(params object[] columnValues)
@@ -62,11 +60,6 @@ namespace FClub.BLL.IO.Logging
 				}
 			}
 			return _builder.ToString();
-		}
-
-		private bool FileExists()
-		{
-			return File.Exists(FullPath);
 		}
 	}
 }

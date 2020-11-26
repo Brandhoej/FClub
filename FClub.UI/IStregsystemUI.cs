@@ -1,17 +1,15 @@
-﻿using FClub.Model;
+﻿using FClub.Core;
+using FClub.Model;
 using System.Collections.Generic;
 
 namespace FClub.UI
 {
-	public delegate string stregsystemEvent(string name, string parameters);
-
 	public interface IStregsystemUI
 	{
 		bool Running { get; }
 
 		void Start();
 
-		void DisplayProduct(Product product);
 		void DisplayProducts(IEnumerable<Product> products);
 		void DisplayUserBuyInterface(User user, IEnumerable<Product> products);
 		void DisplayUserInformation(User user, IEnumerable<Transaction> transactions);

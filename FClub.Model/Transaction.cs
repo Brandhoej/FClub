@@ -45,7 +45,7 @@ namespace FClub.Model
 
 		public override string ToString()
 		{
-			return $"{Id}: {User.Username} {Amount} {Date}";
+			return $"{Id} ({GetType().Name}): {User.Username} {Amount} {Date}";
 		}
 	}
 }

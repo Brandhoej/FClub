@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FClub.BLL\FClub.BLL.csproj" />
+    <ProjectReference Include="..\FClub.Core\FClub.Core.csproj" />
     <ProjectReference Include="..\FClub.Model\FClub.Model.csproj" />
   </ItemGroup>
 

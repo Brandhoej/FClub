@@ -15,5 +15,10 @@ namespace FClub.Model
 				throw new ArgumentException("Cannot insert negative amount", nameof(amount));
 			}
 		}
+
+		public override string ToString()
+		{
+			return $"{Id} ({GetType().Name}) inserted {Amount} to {User.Username} {Date}";
+		}
 	}
 }

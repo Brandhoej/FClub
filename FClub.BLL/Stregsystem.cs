@@ -32,15 +32,16 @@ namespace FClub.BLL
 			m_transactionLogger = new TransactionLogger(Path.Combine(Environment.CurrentDirectory, "Log"), "transaction_log.txt");
 
 			// TODO: Remove
-			Users.Insert(new User(99, "Andreas", "Brandhoej", "Hyw", "akbr18@student.aau.dk", 100));
+			Users.Insert(new User(99, "Andreas", "Brandhoej", "hyw", "akbr18@student.aau.dk", 100));
 		}
+
+		public IEnumerable<Product> ActiveProducts => Products.FindAll(curr => curr.Active);
 
 		private IRepository<Product> Products { get; }
 		private IRepository<User> Users { get; }
 		private IRepository<Transaction> Transactions { get; }
 		private IIdentifier TransactionIdentifier { get; }
 		
-		public IEnumerable<Product> ActiveProducts => Products.FindAll(curr => curr.Active);
 
 		public InsertCashTransaction AddCreditsToAccount(User user, decimal amount)
 		{
@@ -54,16 +55,9 @@ namespace FClub.BLL
 				throw new ArgumentNullException(nameof(user), "User cannot be null");
 			}
 
-			try
-			{
-				InsertCashTransaction _insertCashTransaction = new InsertCashTransaction(TransactionIdentifier, user, amount);
-				ExecuteTransaction(_insertCashTransaction);
-				return _insertCashTransaction;
-			}
-			catch 
-			{
-				throw;
-			}
+			InsertCashTransaction _insertCashTransaction = new InsertCashTransaction(TransactionIdentifier, user, amount);
+			ExecuteTransaction(_insertCashTransaction);
+			return _insertCashTransaction;
 		}
 
 		public BuyTransaction BuyProduct(User user, Product product, int amount = 1)
@@ -89,20 +83,13 @@ namespace FClub.BLL
 				throw new InsufficientCreditsException(user, product);
 			}
 
-			try
+			BuyTransaction _buyTransaction = default;
+			for (int i = 0; i < amount; i++)
 			{
-				BuyTransaction _buyTransaction = default;
-				for (int i = 0; i < amount; i++)
-				{
-					_buyTransaction = new BuyTransaction(TransactionIdentifier, user, product);
-					ExecuteTransaction(_buyTransaction);
-				}
-				return _buyTransaction;
+				_buyTransaction = new BuyTransaction(TransactionIdentifier, user, product);
+				ExecuteTransaction(_buyTransaction);
 			}
-			catch
-			{
-				throw;
-			}
+			return _buyTransaction;
 		}
 
 		public Product GetProductById(int id)

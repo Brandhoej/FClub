@@ -87,6 +87,13 @@ namespace FClub.Model
                     throw new ArgumentException("Argument cannot be null or emtpy", nameof(value));
                 }
 
+                Regex _usernamePattern = new Regex(@"[a-z0-9_]", RegexOptions.Compiled);
+
+                if (!_usernamePattern.IsMatch(value))
+                {
+                    throw new ArgumentException($"Username does not follow correct format '{value}''", nameof(value));
+                }
+
                 m_username = value;
             }
         }

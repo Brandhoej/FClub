@@ -3,8 +3,9 @@ using System;
 using System.Collections.Generic;
 using FClub.UI.Scene;
 using FClub.UI.Scene.Console;
-using FClub.UI.Scene.Console.Prefabs;
 using System.Linq;
+using FClub.Core;
+using System.Globalization;
 
 namespace FClub.UI
 {
@@ -20,7 +21,6 @@ namespace FClub.UI
 
 		public bool Running { get; private set; }
 
-		
 		public void Start()
 		{
 			Run();
@@ -46,26 +46,22 @@ namespace FClub.UI
 			}
 		}
 
-		public void DisplayProduct(Product product)
-		{
-			throw new NotImplementedException();
-		}
-
 		public void DisplayProducts(IEnumerable<Product> products)
 		{
 			void Quickbuy(string input)
 			{
 				string[] _split = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-				if (_split.Length == 1)
+				switch (_split.Length)
 				{
-					CommandEntered("/users", input);
-				}
-				else
-				{
-					CommandEntered("/buy", input);
+					case 0: break;
+					case 1: CommandEntered("/users", input); break;
+					case 2: CommandEntered("/buy", input); break;
+					case 3: CommandEntered("/multi-buy", input); break;
+					default: DisplayTooManyArgumentsError(input); break;
 				}
 			}
 
+			const string _format = "{0,-5} {1, -12} {2, -20}";
 			IConsoleScene _consoleScene = new ConsoleScene();
 			IConsoleMenuBuilder _consoleMenuBuilder = new ConsoleMenuBuilder(_consoleScene);
 			_consoleMenuBuilder
@@ -73,9 +69,10 @@ namespace FClub.UI
 				.AddLabel("1. Indtast dit brugernavn nedenfor. Du vil så blive præsenteret for en interaktiv menu.")
 				.AddLabel("2. Indtast dit brugernavn og et eller flere produkt ID (adskilt med \"space\"). Købet vil blive direkte registreret uden yderligere input. Under feltet vil der vises en bekræftelse af købet.")
 				.MultipleNext(1).AddLineSpacer()
-				.AddForeach(products, _product => _consoleMenuBuilder.AddLabel(_product.Name))
+				.AddLabel(string.Format(_format, "Id", "Pris", "Navn"))
+				.AddForeach(products, _product => _consoleMenuBuilder.AddLabel(string.Format(_format, _product.Id, _product.Price.ToString("C2", CultureInfo.CreateSpecificCulture("da-DK")), _product.Name)))
 				.MultipleNext(1).AddLineSpacer()
-				.AddLabel("Qucibuy>", false)
+				.AddLabel("Quickbuy>", false)
 				.AddButtonTextField(Quickbuy).Focus();
 			
 			_consoleScene.AddMenu(_consoleMenuBuilder.Build());
@@ -85,16 +82,19 @@ namespace FClub.UI
 
 		public void DisplayUserBuyInterface(User user, IEnumerable<Product> products)
 		{
+			const string _format = "{0,-5} {1, -12} {2, -20}";
 			IConsoleScene _consoleScene = new ConsoleScene();
 			IConsoleMenuBuilder _consoleMenuBuilder = new ConsoleMenuBuilder(_consoleScene);
 			_consoleMenuBuilder
 				.AddLabel(user.ToString())
-				.AddLabel($"Du har {user.Balance} kroner til gode!")
+				.AddLabel($"Du har {(user.Balance < 50 ? "(under 50 kroner)" : string.Empty)} i alt har du {user.Balance} kroner til gode!") 
 				.MultipleNext(1).AddLineSpacer()
-				.AddForeach(products, product =>
+				.AddLabel(string.Format(_format, "Id", "Pris", "Navn"))
+				.AddForeach(products, _product =>
 				{
 					_consoleMenuBuilder
-						.AddButton(product.Name, () => CommandEntered("/buy", $"{user.Username} {product.Id}"))
+						.AddButton(string.Format(_format, _product.Id, _product.Price, _product.Name), 
+							() => CommandEntered("/buy", $"{user.Username} {_product.Id} {_product.Price.ToString("C2", CultureInfo.CreateSpecificCulture("da-DK"))} kroner"))
 						.IgnoreNext().AddLineSpacer()
 						.AddBiNavigationTo(SceneNavigationDirection.Down);
 				})
@@ -102,7 +102,7 @@ namespace FClub.UI
 				.AddButton("Tilbage", () => CommandEntered("/products", string.Empty))
 				.IgnoreNext().AddLabel("     ", false)
 				.AddBiNavigationTo(SceneNavigationDirection.Right)
-				.AddButton("User info", () => CommandEntered("/users/info", user.Username)).Focus();
+				.AddButton("Bruger info", () => CommandEntered("/users/info", user.Username)).Focus();
 
 			_consoleScene.AddMenu(_consoleMenuBuilder.Build());
 			m_sceneManager.SetScene(_consoleScene);
@@ -116,6 +116,7 @@ namespace FClub.UI
 
 			_consoleMenuBuilder
 				.AddLabel(user.ToString())
+				.AddLabel($"Du har {user.Balance} kroner på din konto")
 				.AddLineSpacer()
 				.AddLabel(transactions.Count() == 0 ? "Du har ingen transaktioner" : "Transaktioner:")
 				.AddForeach(transactions, transaction => _consoleMenuBuilder.AddLabel(transaction.ToString()))
@@ -246,7 +247,7 @@ namespace FClub.UI
 			IConsoleMenuBuilder _consoleMenuBuilder = new ConsoleMenuBuilder(_consoleScene);
 
 			_consoleMenuBuilder
-				.AddLabel($"Admi kommanda: '{adminCommand}'")
+				.AddLabel($"Admin kommando ikke fundet: '{adminCommand}'")
 				.AddLineSpacer()
 				.AddButton("Tilbage", () => CommandEntered("/products", string.Empty)).Focus();
 
@@ -260,7 +261,18 @@ namespace FClub.UI
 			void ExecuteAdminCommand(string input)
 			{
 				string[] _split = input.Split(" ", StringSplitOptions.RemoveEmptyEntries);
-				CommandEntered($":{_split[0]}", string.Join(' ', _split[1..^0]));
+				if (_split.Length > 0)
+				{
+					IStregsystemCommandResult _result = CommandEntered($":{_split[0]}", string.Join(' ', _split[1..]));
+					if (_result is Error _error && !string.IsNullOrEmpty(_error.Message))
+					{
+						DisplayAdminCommandNotFoundMessage(input);
+					}
+					else if (_result.Code == 200)
+					{
+						DisplayAdmin();
+					}
+				}
 			}
 
 			IConsoleScene _consoleScene = new ConsoleScene();
@@ -269,10 +281,10 @@ namespace FClub.UI
 			_consoleMenuBuilder
 				.AddLabel("Indsæt admin kommando")
 				.AddLabel(":", false)
-				.AddButtonTextField(ExecuteAdminCommand)
+				.AddButtonTextField(ExecuteAdminCommand).Focus()
 				.AddBiNavigationTo(SceneNavigationDirection.Down)
 				.IgnoreNext().AddLineSpacer()
-				.AddButton("Tilbage", () => CommandEntered("/products", string.Empty)).Focus();
+				.AddButton("Tilbage", () => CommandEntered("/products", string.Empty));
 
 			_consoleScene.AddMenu(_consoleMenuBuilder.Build());
 			m_sceneManager.SetScene(_consoleScene);

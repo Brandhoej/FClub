@@ -1,7 +1,7 @@
-﻿namespace FClub.Controller.Command
+﻿namespace FClub.Core
 {
 	public interface IStregsystemCommandResult
 	{
-
+		public int Code { get; }
 	}
 }

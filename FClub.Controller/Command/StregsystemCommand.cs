@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FClub.Core;
+using System;
 using System.Linq;
 using System.Reflection;
 
@@ -25,7 +26,7 @@ namespace FClub.Controller.Command
 			}
 			catch
 			{
-				throw new Exception("Input did not match command");
+				return new Error("Noget gik galt da kommando forsøgte at blive kørt");
 			}
 		}
 
@@ -38,41 +39,46 @@ namespace FClub.Controller.Command
 		{
 			try
 			{
-				string[] _split = SplitString(input);
-				int _defaultCount = ParameterInfos.Count(info => info.HasDefaultValue);
-				if (_split.Length + _defaultCount < ParameterInfos.Length)
-				{
-					throw new ArgumentException("Split length is too small", nameof(input));
-				}
-
-				object[] _parameters = new object[ParameterInfos.Length];
-
-				for (int i = 0; i < ParameterInfos.Length; i++)
-				{
-					/* parse splits until no more.
-					 * Defaults are always at the end (language rule) */
-					if (i < _split.Length && 
-						ParseParameter(_split[i], ParameterInfos[i].ParameterType, out object result))
-					{
-						_parameters[i] = result;
-					}
-					else if (i >= _split.Length &&
-						ParameterInfos[i].HasDefaultValue)
-					{
-						_parameters[i] = ParameterInfos[i].DefaultValue;
-					}
-					else
-					{
-						return default;
-					}
-				}
-
-				return _parameters;
+				return ParseParamsFromInput(input);
 			}
 			catch
 			{
 				return default;
 			}
+		}
+
+		private object[] ParseParamsFromInput(string input)
+		{
+			string[] _split = SplitString(input);
+			int _defaultCount = ParameterInfos.Count(info => info.HasDefaultValue);
+			if (_split.Length + _defaultCount < ParameterInfos.Length)
+			{
+				throw new ArgumentException("Split length is too small", nameof(input));
+			}
+
+			object[] _parameters = new object[ParameterInfos.Length];
+
+			for (int i = 0; i < ParameterInfos.Length; i++)
+			{
+				/* parse splits until no more.
+				 * Defaults are always at the end (language rule) */
+				if (i < _split.Length &&
+					ParseParameter(_split[i], ParameterInfos[i].ParameterType, out object result))
+				{
+					_parameters[i] = result;
+				}
+				else if (i >= _split.Length &&
+					ParameterInfos[i].HasDefaultValue)
+				{
+					_parameters[i] = ParameterInfos[i].DefaultValue;
+				}
+				else
+				{
+					return default;
+				}
+			}
+
+			return _parameters;
 		}
 
 		public bool Match(string name, string input)
@@ -99,8 +105,8 @@ namespace FClub.Controller.Command
 
 		private string[] SplitString(string input)
 		{
-			const string separator = " ";
-			return input.Split(separator, StringSplitOptions.RemoveEmptyEntries);
+			const string _separator = " ";
+			return input.Split(_separator, StringSplitOptions.RemoveEmptyEntries);
 		}
 	}
 }

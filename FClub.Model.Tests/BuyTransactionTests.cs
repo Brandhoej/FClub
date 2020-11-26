@@ -119,31 +119,6 @@ namespace FClub.Model.Tests
 		}
 
 		[TestMethod]
-		public void Execute_ThrowsInsufficientCreditsException_IfUserDoesNotHaveSufficientBalance()
-		{
-			// Arrange
-			const decimal _productPrice = 100;
-			const decimal _userInitBalance = 10;
-			User _user;
-			Product _product;
-			DateTime _datetime = DateTime.Now;
-			BuyTransaction _buyTransaction;
-
-			// Act
-			_user = new User(m_identifier, "FirstName", "LastName", "Username", "akbr18@student.aau.dk", _userInitBalance);
-			_product = new Product(1, "Name", _productPrice, true, false);
-			_buyTransaction = new BuyTransaction(m_identifier, _user, _product, _datetime);
-
-			void Test()
-			{
-				_buyTransaction.Execute();
-			}
-
-			// Assert
-			Assert.ThrowsException<InsufficientCreditsException>(Test);
-		}
-
-		[TestMethod]
 		public void Execute_UsersBalanceDeductedPriceOfProduct_IfUserHasSufficientBalance()
 		{
 			// Arrange
