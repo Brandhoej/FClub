@@ -19,7 +19,7 @@ namespace FClub.DAL.Tests
 			UsersReader _usersReader;
 
 			// Act
-			_usersReader = new UsersReader(_separator, _path);
+			_usersReader = new UsersReader(_path, _separator);
 
 			// Assert
 			Assert.AreEqual(_separator, _usersReader.Separator);
@@ -74,7 +74,7 @@ namespace FClub.DAL.Tests
 			void Test()
 			{
 				_usersReader = new UsersReader(_separator, _path);
-				_usersReader.CreateUserFromLine(string.Empty);
+				_usersReader.Construct(string.Empty);
 			}
 
 			// Assert
@@ -112,8 +112,8 @@ namespace FClub.DAL.Tests
 			_stringBuilder.Append(_email);
 			_stringBuilder.Append(_separator);
 
-			_usersReader = new UsersReader(_separator, _path);
-			_user = _usersReader.CreateUserFromLine(_stringBuilder.ToString());
+			_usersReader = new UsersReader(_path, _separator);
+			_user = _usersReader.Construct(_stringBuilder.ToString());
 
 			// Assert
 			Assert.AreEqual(_separator, _usersReader.Separator);
@@ -157,8 +157,8 @@ namespace FClub.DAL.Tests
 			_stringBuilder.Append(_email);
 			_stringBuilder.Append(_separator);
 
-			_usersReader = new UsersReader(_separator, _path);
-			_user = _usersReader.CreateUserFromLine(_stringBuilder.ToString());
+			_usersReader = new UsersReader(_path, _separator);
+			_user = _usersReader.Construct(_stringBuilder.ToString());
 
 			// Assert
 			Assert.AreEqual(_separator, _usersReader.Separator);

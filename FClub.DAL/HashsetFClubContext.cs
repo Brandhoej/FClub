@@ -10,12 +10,12 @@ namespace FClub.DAL
 	{
 		public HashsetFClubContext(string dataProductsPath, string dataUsersPath)
 		{
-			IProductsReader _productsReader = new ProductsReader(";", dataProductsPath);
-			IUsersReader _usersReader = new UsersReader(",", dataUsersPath);
+			IReadonlyDelimitedDocumentDatabase<Product> _productsReader = new ProductsReader(dataProductsPath, ";");
+			IReadonlyDelimitedDocumentDatabase<User> _usersReader = new UsersReader(dataUsersPath, ",");
 
 			Transactions = new HashSet<Transaction>();
-			Products = new HashSet<Product>(_productsReader.ReadProducts());
-			Users = new HashSet<User>(_usersReader.ReadUsers());
+			Products = new HashSet<Product>(_productsReader.ReadAll());
+			Users = new HashSet<User>(_usersReader.ReadAll());
 		}
 
 		public HashsetFClubContext()

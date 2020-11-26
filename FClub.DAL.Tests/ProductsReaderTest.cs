@@ -19,7 +19,7 @@ namespace FClub.DAL.Tests
 			ProductsReader _productsReader;
 
 			// Act
-			_productsReader = new ProductsReader(_separator, _path);
+			_productsReader = new ProductsReader(_path, _separator);
 
 			// Assert
 			Assert.AreEqual(_separator, _productsReader.Separator);
@@ -37,7 +37,7 @@ namespace FClub.DAL.Tests
 			// Act
 			void Test()
 			{
-				_productsReader = new ProductsReader(_separator, _path);
+				_productsReader = new ProductsReader(_path, _separator);
 			}
 
 			// Assert
@@ -55,7 +55,7 @@ namespace FClub.DAL.Tests
 			// Act
 			void Test()
 			{
-				_productsReader = new ProductsReader(_separator, _path);
+				_productsReader = new ProductsReader(_path, _separator);
 			}
 
 			// Assert
@@ -73,8 +73,8 @@ namespace FClub.DAL.Tests
 			// Act
 			void Test()
 			{
-				_productsReader = new ProductsReader(_separator, _path);
-				_productsReader.CreateProductFromLine(string.Empty);
+				_productsReader = new ProductsReader(_path, _separator);
+				_productsReader.Construct(string.Empty);
 			}
 
 			// Assert
@@ -105,8 +105,8 @@ namespace FClub.DAL.Tests
 			_stringBuilder.Append(_separator);
 			_stringBuilder.Append(_active == true ? "1" : "0");
 
-			_productsReader = new ProductsReader(_separator, _path);
-			_product = _productsReader.CreateProductFromLine(_stringBuilder.ToString());
+			_productsReader = new ProductsReader(_path, _separator);
+			_product = _productsReader.Construct(_stringBuilder.ToString());
 
 			// Assert
 			Assert.AreEqual(_separator, _productsReader.Separator);
@@ -141,8 +141,8 @@ namespace FClub.DAL.Tests
 			_stringBuilder.Append(_separator);
 			_stringBuilder.Append(_active == true ? "1" : "0");
 
-			_productsReader = new ProductsReader(_separator, _path);
-			_product = _productsReader.CreateProductFromLine(_stringBuilder.ToString());
+			_productsReader = new ProductsReader(_path, _separator);
+			_product = _productsReader.Construct(_stringBuilder.ToString());
 
 			// Assert
 			Assert.AreEqual(_separator, _productsReader.Separator);
@@ -181,8 +181,8 @@ namespace FClub.DAL.Tests
 			_stringBuilder.Append(_separator);
 			_stringBuilder.Append(_dateTime);
 
-			_productsReader = new ProductsReader(_separator, _path);
-			_product = _productsReader.CreateProductFromLine(_stringBuilder.ToString());
+			_productsReader = new ProductsReader(_path, _separator);
+			_product = _productsReader.Construct(_stringBuilder.ToString());
 
 			// Assert
 			Assert.AreEqual(_separator, _productsReader.Separator);
@@ -216,15 +216,11 @@ namespace FClub.DAL.Tests
 			_stringBuilder.Append(_name);
 			_stringBuilder.Append(_separator);
 			_stringBuilder.Append(_price);
-			_stringBuilder.Append(_separator);
-			_stringBuilder.Append(_active == true ? "1" : "0");
-			_stringBuilder.Append(_separator);
-			_stringBuilder.Append(_dateTime);
 
 			void Test()
 			{
-				_productsReader = new ProductsReader(_separator, _path);
-				_product = _productsReader.CreateProductFromLine(_stringBuilder.ToString());
+				_productsReader = new ProductsReader(_path, _separator);
+				_product = _productsReader.Construct(_stringBuilder.ToString());
 			}
 
 			// Assert
